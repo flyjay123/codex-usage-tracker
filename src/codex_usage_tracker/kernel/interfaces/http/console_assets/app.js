@@ -13,14 +13,14 @@ const API = "/api/kernel/v1";
 
 const COPY = Object.freeze({
   live: {
-    eyebrow: "Live kernel",
-    title: "Usage as it lands",
-    description: "Committed facts first. New generations appear without rebuilding your existing index.",
+    eyebrow: "本地用量统计",
+    title: "Codex 用量",
+    description: "选择月份，直接查看 Token 总量和明细。",
   },
   explore: {
-    eyebrow: "Guided exploration",
-    title: "Ask the fact store",
-    description: "Build one bounded query. The kernel returns facts and exact evidence selectors; you decide what they mean.",
+    eyebrow: "高级查询",
+    title: "详细数据探索",
+    description: "按模型、项目和会话查询本地用量。",
   },
   evidence: {
     eyebrow: "Exact evidence",
@@ -117,12 +117,12 @@ function setStatusPresentation(status) {
   const hasSnapshot = Number.isInteger(status.generation);
   const stale = status.state === "stale" || status.freshness?.stale === true;
   generationLabel.textContent = hasSnapshot
-    ? `Generation ${status.generation} · committed`
-    : "No committed generation";
+    ? `第 ${status.generation} 代 · 已提交`
+    : "暂无已提交数据";
   freshnessChip.className = `chip ${status.refresh || stale ? "warn" : hasSnapshot ? "good" : "neutral"}`;
   freshnessChip.textContent = status.refresh
     ? `Refresh ${status.refresh.progress_percent || 0}%`
-    : stale ? "Stale snapshot" : hasSnapshot ? "Ready from cache" : "Refresh required";
+    : stale ? "数据已过期" : hasSnapshot ? "缓存已就绪" : "需要刷新";
   connectionDot.classList.toggle("online", true);
   connectionLabel.textContent = "Kernel connected";
 }
@@ -175,6 +175,9 @@ function tableFor(rows, includeEvidence = false) {
 }
 
 async function renderLive() {
+  return renderMonthlyUsage();
+  /* Advanced live-kernel view retained below for rollback/reference. */
+  /*
   workspace.replaceChildren(heading("live"), loadingMetrics());
   if (!state.status?.generation) {
     workspace.append(element("div", { className: "card empty", text: "Build the first local generation with Refresh data. Existing sessions are not read until you ask." }));
@@ -244,6 +247,72 @@ async function renderLive() {
   } catch (error) {
     workspace.replaceChildren(heading("live"), errorPanel(error, renderLive));
   }
+  */
+}
+
+function monthBounds(value) {
+  const match = /^(\d{4})-(\d{2})$/.exec(value || "");
+  const now = new Date();
+  const year = match ? Number(match[1]) : now.getFullYear();
+  const month = match ? Number(match[2]) - 1 : now.getMonth();
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 1);
+  return { value: `${year}-${String(month + 1).padStart(2, "0")}`, start: start.toISOString(), end: end.toISOString() };
+}
+
+function usageCard(label, value, accent = "") {
+  return element("div", { className: `usage-card ${accent}` }, [
+    element("span", { className: "usage-label", text: label }),
+    element("strong", { className: "usage-value", text: typeof value === "string" ? value : formatNumber(value) }),
+  ]);
+}
+
+async function renderMonthlyUsage() {
+  workspace.replaceChildren(heading("live"));
+  const bounds = monthBounds(state.month || "");
+  state.month = bounds.value;
+  const monthInput = element("input", { type: "month", value: bounds.value, "aria-label": "选择月份" });
+  const panel = element("section", { className: "card monthly-panel" }, [
+    element("div", { className: "month-toolbar" }, [
+      element("label", { text: "统计月份" }), monthInput,
+      element("button", { className: "button primary", type: "button", text: "重新统计", id: "month-run" }),
+    ]),
+    element("p", { className: "month-hint", text: "数据来自本机 Codex 日志；中转站不会影响 Token 统计。" }),
+  ]);
+  workspace.append(panel);
+  const result = element("div", { id: "monthly-result" }, [element("div", { className: "loading", text: "正在统计…" })]);
+  workspace.append(result);
+  const run = async () => {
+    if (!monthInput.value) {
+      result.replaceChildren(element("p", { className: "month-empty", text: "请选择要统计的月份。" }));
+      return;
+    }
+    const selected = monthBounds(monthInput.value);
+    state.month = selected.value;
+    result.replaceChildren(element("div", { className: "loading", text: "正在统计…" }));
+    try {
+      const payload = await request("/query", { method: "POST", body: JSON.stringify({ requests: [{ dataset: "calls", operation: "aggregate", dimensions: [], measures: ["calls", "input_tokens", "cached_input_tokens", "uncached_input_tokens", "output_tokens", "reasoning_tokens", "total_tokens", "cache_reuse"], filters: [{ field: "event_at", operator: "gte", value: selected.start }, { field: "event_at", operator: "lt", value: selected.end }], limit: 1 }] }) });
+      const resultData = payload.results[0];
+      const row = resultData.rows[0] || {};
+      result.replaceChildren(
+        element("div", { className: "month-title", text: `${selected.value.replace("-", "年")}月用量` }),
+        element("div", { className: "usage-grid" }, [
+          usageCard("总 Token", row.total_tokens, "primary"),
+          usageCard("调用次数", row.calls),
+          usageCard("输入 Token", row.input_tokens),
+          usageCard("缓存输入", row.cached_input_tokens),
+          usageCard("未缓存输入", row.uncached_input_tokens),
+          usageCard("输出 Token", row.output_tokens),
+          usageCard("推理 Token", row.reasoning_tokens),
+          usageCard("缓存复用率", row.cache_reuse == null ? null : `${(Number(row.cache_reuse) * 100).toFixed(2)}%`),
+        ]),
+        element("p", { className: "result-meta", text: `统计等级：${resultData.grade === "exact" ? "精确" : resultData.grade || "—"} · 覆盖率：${resultData.coverage?.measures?.total_tokens?.coverage_percent ?? 0}%` }),
+      );
+    } catch (error) { result.replaceChildren(errorPanel(error, run)); }
+  };
+  monthInput.addEventListener("change", run);
+  panel.querySelector("#month-run").addEventListener("click", run);
+  await run();
 }
 
 function loadingMetrics() {

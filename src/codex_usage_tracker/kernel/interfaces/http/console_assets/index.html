@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,29 +18,29 @@
           <span class="brand-mark" aria-hidden="true">&gt;_</span>
           <span><strong>Codex Usage Tracker</strong><small>Local evidence kernel</small></span>
         </div>
-        <p class="local-badge">Local data only</p>
+        <p class="local-badge">仅本机数据</p>
         <nav aria-label="Primary navigation">
-          <a href="/live" data-route="live"><span aria-hidden="true">◉</span>Live</a>
-          <a href="/explore" data-route="explore"><span aria-hidden="true">⌕</span>Explore</a>
-          <a href="/evidence" data-route="evidence"><span aria-hidden="true">◇</span>Evidence</a>
-          <a href="/limits" data-route="limits"><span aria-hidden="true">◔</span>Limits</a>
-          <a href="/settings" data-route="settings"><span aria-hidden="true">⚙</span>Settings</a>
+          <a href="/live" data-route="live"><span aria-hidden="true">◉</span>用量</a>
+          <a href="/explore" data-route="explore"><span aria-hidden="true">⌕</span>高级查询</a>
+          <a href="/evidence" data-route="evidence"><span aria-hidden="true">◇</span>证据</a>
+          <a href="/limits" data-route="limits"><span aria-hidden="true">◔</span>限额</a>
+          <a href="/settings" data-route="settings"><span aria-hidden="true">⚙</span>设置</a>
         </nav>
         <div class="sidebar-status">
           <span id="connection-dot" class="status-dot" aria-hidden="true"></span>
-          <span id="connection-label">Connecting…</span>
+          <span id="connection-label">连接中…</span>
         </div>
       </aside>
       <div class="content">
         <header class="topbar">
           <button id="menu-toggle" class="icon-button" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
           <div>
-            <span class="eyebrow">Committed snapshot</span>
+            <span class="eyebrow">本地数据快照</span>
             <strong id="generation-label">Loading local index…</strong>
           </div>
           <div class="topbar-actions">
-            <span id="freshness-chip" class="chip neutral">Checking freshness</span>
-            <button id="refresh-button" class="button secondary" type="button">Refresh data</button>
+            <span id="freshness-chip" class="chip neutral">检查数据状态</span>
+            <button id="refresh-button" class="button secondary" type="button">刷新数据</button>
           </div>
         </header>
         <main id="workspace" tabindex="-1" aria-live="polite"></main>

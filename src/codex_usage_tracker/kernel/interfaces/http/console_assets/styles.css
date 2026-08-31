@@ -230,3 +230,21 @@ input, select {
   input, select { border-color: #3a4c63; }
   .bar-track, .skeleton { background: #26364a; }
 }
+:root {
+  --monthly-accent: #2563eb;
+}
+
+.monthly-panel { margin-bottom: 1rem; }
+.month-toolbar { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+.month-toolbar label { font-weight: 700; color: #17324d; }
+.month-toolbar input[type="month"] { min-height: 2.6rem; padding: .45rem .7rem; border: 1px solid #bfd0e3; border-radius: 8px; font: inherit; color: #17324d; }
+.month-hint { margin: .75rem 0 0; color: #64748b; }
+.month-title { font-size: 1.35rem; font-weight: 750; color: #17324d; margin: 1.2rem 0 .8rem; }
+.usage-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .8rem; }
+.usage-card { background: #fff; border: 1px solid #dbe5ef; border-radius: 8px; padding: 1rem; min-height: 5.8rem; display: flex; flex-direction: column; justify-content: space-between; }
+.usage-card.primary { background: #eff6ff; border-color: #93c5fd; }
+.usage-label { color: #64748b; font-size: .88rem; }
+.usage-value { color: #17324d; font-size: 1.25rem; overflow-wrap: anywhere; }
+.loading { padding: 1.5rem; color: #64748b; }
+@media (max-width: 900px) { .usage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .usage-grid { grid-template-columns: 1fr; } }
