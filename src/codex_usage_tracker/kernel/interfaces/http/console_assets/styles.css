@@ -299,6 +299,20 @@ input, select {
 }
 
 .monthly-panel { margin-bottom: 1rem; }
+.usage-provider-panel { margin-top: 1rem; }
+.provider-heading h2 { margin: 0 0 .35rem; }
+.provider-controls {
+  align-items: end;
+  display: grid;
+  gap: .65rem;
+  grid-template-columns: minmax(220px, 1fr) auto auto auto;
+  margin: 1rem 0;
+}
+.provider-result h3 { margin: 1.2rem 0 .6rem; }
+@media (max-width: 760px) {
+  .provider-controls { grid-template-columns: 1fr 1fr; }
+  .provider-controls input { grid-column: 1 / -1; }
+}
 .month-toolbar { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
 .month-toolbar label { font-weight: 700; color: #17324d; }
 .month-toolbar input[type="month"] { min-height: 2.6rem; padding: .45rem .7rem; border: 1px solid #bfd0e3; border-radius: 8px; font: inherit; color: #17324d; }

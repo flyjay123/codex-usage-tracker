@@ -642,6 +642,109 @@ function usageCard(label, value, accent = "") {
   ]);
 }
 
+function relayUsageValue(value, unit = "") {
+  if (value === null || value === undefined || typeof value === "object") return "—";
+  const numeric = Number(value);
+  const rendered = Number.isFinite(numeric) ? formatNumber(numeric) : String(value);
+  return unit ? `${rendered} ${unit}` : rendered;
+}
+
+function relayUsageRows(value, keyName) {
+  if (Array.isArray(value)) return value.filter((item) => item && typeof item === "object");
+  if (!value || typeof value !== "object") return [];
+  return Object.entries(value).map(([key, item]) => (
+    item && typeof item === "object" ? { [keyName]: key, ...item } : { [keyName]: key, usage: item }
+  ));
+}
+
+function renderRelayUsageData(target, payload, cached) {
+  const unit = typeof payload.unit === "string" ? payload.unit : "";
+  const dailyRows = relayUsageRows(payload.daily_usage, "date");
+  const modelRows = relayUsageRows(payload.model_stats, "model");
+  const children = [
+    element("div", { className: "usage-grid" }, [
+      usageCard("套餐", relayUsageValue(payload.planName), "primary"),
+      usageCard("已用", relayUsageValue(payload.usage, unit)),
+      usageCard("剩余", relayUsageValue(payload.remaining, unit)),
+      usageCard("余额", relayUsageValue(payload.balance, unit)),
+      usageCard("模式", relayUsageValue(payload.mode)),
+      usageCard("状态", payload.isValid === false ? "不可用" : "正常"),
+    ]),
+    element("p", { className: "result-meta", text: cached ? "显示 5 分钟内的缓存结果" : "刚刚从中转站更新" }),
+  ];
+  if (dailyRows.length) children.push(
+    element("h3", { text: "每日用量" }),
+    tableFor(dailyRows, false, { label: "每日用量" }),
+  );
+  if (modelRows.length) children.push(
+    element("h3", { text: "模型统计" }),
+    tableFor(modelRows, false, { label: "模型统计" }),
+  );
+  target.replaceChildren(...children);
+}
+
+async function renderRelayUsage() {
+  workspace.querySelectorAll(".usage-provider-panel").forEach((node) => node.remove());
+  const apiKey = element("input", {
+    type: "password",
+    autocomplete: "new-password",
+    placeholder: "输入中转站 API Key",
+    "aria-label": "中转站 API Key",
+  });
+  const result = element("div", { className: "provider-result" });
+  const saveButton = element("button", { className: "button primary", type: "button", text: "保存并查询" });
+  const refreshButton = element("button", { className: "button ghost", type: "button", text: "刷新用量" });
+  const clearButton = element("button", { className: "button ghost", type: "button", text: "清除密钥" });
+  const panel = element("section", { className: "card usage-provider-panel" }, [
+    element("div", { className: "provider-heading" }, [
+      element("div", {}, [
+        element("h2", { text: "中转站用量" }),
+        element("p", { className: "month-hint", text: "密钥仅保存在本机 Usage Tracker 配置中。查询结果缓存 5 分钟。" }),
+      ]),
+    ]),
+    element("div", { className: "provider-controls" }, [apiKey, saveButton, refreshButton, clearButton]),
+    result,
+  ]);
+  workspace.append(panel);
+  const load = async (force = false) => {
+    result.replaceChildren(element("div", { className: "loading", text: "正在读取中转站用量…" }));
+    try {
+      const response = await request(`/usage-provider${force ? "?refresh=1" : ""}`);
+      refreshButton.disabled = !response.configured;
+      clearButton.disabled = !response.configured;
+      if (!response.configured) {
+        result.replaceChildren(element("p", { className: "month-empty", text: "保存 API Key 后即可查看中转站用量。" }));
+        return;
+      }
+      renderRelayUsageData(result, response.usage || {}, response.cached === true);
+    } catch (error) {
+      result.replaceChildren(errorPanel(error, () => load(force)));
+    }
+  };
+  saveButton.addEventListener("click", async () => {
+    if (!apiKey.value.trim()) {
+      result.replaceChildren(element("p", { className: "month-empty", text: "请输入 API Key。" }));
+      return;
+    }
+    saveButton.disabled = true;
+    try {
+      await request("/usage-provider/config", { method: "POST", body: JSON.stringify({ api_key: apiKey.value.trim() }) });
+      apiKey.value = "";
+      await load(true);
+    } catch (error) {
+      result.replaceChildren(errorPanel(error));
+    } finally {
+      saveButton.disabled = false;
+    }
+  });
+  refreshButton.addEventListener("click", () => load(true));
+  clearButton.addEventListener("click", async () => {
+    await request("/usage-provider/config", { method: "POST", body: JSON.stringify({ clear: true }) });
+    await load();
+  });
+  await load();
+}
+
 async function renderMonthlyUsage() {
   workspace.replaceChildren(heading("live"));
   const bounds = monthBounds(state.month || "");
@@ -688,6 +791,7 @@ async function renderMonthlyUsage() {
   monthInput.addEventListener("change", run);
   panel.querySelector("#month-run").addEventListener("click", run);
   await run();
+  await renderRelayUsage();
 }
 
 function loadingMetrics() {

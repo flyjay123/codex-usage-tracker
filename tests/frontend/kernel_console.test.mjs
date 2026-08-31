@@ -168,12 +168,12 @@ test("human tables put decision fields first and technical identity last", () =>
       "generation",
     ],
   );
-  assert.equal(humanColumnLabel("thread_label"), "Thread");
-  assert.equal(humanColumnLabel("configured_cost_usd"), "Cost (USD)");
-  assert.equal(humanColumnLabel("estimated_credits"), "Est. credits");
+  assert.equal(humanColumnLabel("thread_label"), "会话");
+  assert.equal(humanColumnLabel("configured_cost_usd"), "费用（美元）");
+  assert.equal(humanColumnLabel("estimated_credits"), "预估额度");
   assert.equal(humanColumnLabel("adjacent_total_tokens"), "Adjacent tokens");
   assert.equal(humanColumnLabel("share_total_tokens"), "Token share");
-  assert.equal(humanColumnLabel("token_mix"), "Token mix");
+  assert.equal(humanColumnLabel("token_mix"), "Token 明细");
 });
 
 test("table sorting and pagination are deterministic without mutating facts", () => {

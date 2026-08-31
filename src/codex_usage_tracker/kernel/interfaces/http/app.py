@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlsplit
 from ...application import KernelApplication
 from ...hydration import HydrationPreset
 from ...live import parse_last_event_id, validate_loopback_origin
+from .usage_provider import UsageProvider, UsageProviderError
 
 API_PREFIX = "/api/kernel/v1"
 ROUTES = {
@@ -21,6 +22,8 @@ ROUTES = {
     ("GET", f"{API_PREFIX}/allowance"): "allowance",
     ("GET", f"{API_PREFIX}/jobs/{{job_id}}"): "job_status",
     ("GET", f"{API_PREFIX}/events"): "events",
+    ("GET", f"{API_PREFIX}/usage-provider"): "usage_provider",
+    ("POST", f"{API_PREFIX}/usage-provider/config"): "usage_provider_config",
 }
 MAX_BODY_BYTES = 1_048_576
 
@@ -34,8 +37,13 @@ class HttpResponse:
 
 
 class HttpApp:
-    def __init__(self, application: KernelApplication) -> None:
+    def __init__(
+        self,
+        application: KernelApplication,
+        usage_provider: UsageProvider | None = None,
+    ) -> None:
         self._application = application
+        self._usage_provider = usage_provider
 
     def handle(
         self,
@@ -103,6 +111,24 @@ class HttpApp:
                     }
                 ),
             )
+        if method == "GET" and path == f"{API_PREFIX}/usage-provider":
+            provider = self._relay_usage_provider()
+            try:
+                return _json_response(
+                    200,
+                    provider.fetch(force=_query_bool(query, "refresh", False)),
+                )
+            except UsageProviderError as exc:
+                return _json_response(502, {"error": str(exc)})
+        if method == "POST" and path == f"{API_PREFIX}/usage-provider/config":
+            provider = self._relay_usage_provider()
+            payload = _json_body(body)
+            if payload.get("clear") is True:
+                return _json_response(200, provider.clear())
+            api_key = payload.get("api_key")
+            if not isinstance(api_key, str):
+                raise ValueError("api_key must be a string")
+            return _json_response(200, provider.save(api_key))
         job_prefix = f"{API_PREFIX}/jobs/"
         if method == "GET" and path.startswith(job_prefix):
             job_id = path.removeprefix(job_prefix)
@@ -130,6 +156,13 @@ class HttpApp:
                 ),
             )
         return _json_response(404, {"error": "kernel route not found"})
+
+    def _relay_usage_provider(self) -> UsageProvider:
+        if self._usage_provider is None:
+            self._usage_provider = UsageProvider(
+                self._application.paths.cache_root / "nextcode-usage.json"
+            )
+        return self._usage_provider
 
 
 def validate_loopback_request(host: str | None, origin: str | None) -> None:
