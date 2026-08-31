@@ -6,12 +6,15 @@ prune .codex-plugin
 prune assets
 include config/kernel-code-disposition-v1.json
 include config/kernel-development-efficiency-v1.json
+include config/kernel-fault-recovery-scale-v1.json
 include config/kernel-overlay-adapter-v1.json
 include config/kernel-performance-budget.json
 include config/kernel-release-candidate-budget.json
+include docs/decisions/evidence/kernel-release-candidate-package-budget-supersession.json
 include config/kernel-release-cutover-v1.json
 include config/kernel-release-qualification-v1.json
 include config/kernel-retired-surfaces-v1.json
+include config/kernel-stable-contract-v1.json
 recursive-include docs *.md
 prune scripts
 include scripts/benchmark_kernel.py
@@ -25,6 +28,9 @@ include scripts/build_kernel_console.mjs
 include scripts/check_kernel_console.mjs
 include scripts/smoke_installed_console.py
 recursive-include frontend/kernel-console *.css *.html *.js *.json
+recursive-include tests/agent_kernel/storage *.py
+include tests/agent_kernel/contracts/vectors/identity-v1.json
+recursive-include tests/agent_kernel/fixtures/tiny-v1 *.json
 recursive-include tests/kernel *.json *.jsonl *.py
 recursive-include tests/frontend *.mjs
 recursive-include tests/e2e *.mjs

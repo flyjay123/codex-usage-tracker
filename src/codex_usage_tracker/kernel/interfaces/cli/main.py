@@ -17,6 +17,7 @@ from ...application.codec import json_value
 from ...application.service import run_refresh_worker
 from ...content import ContextComposition
 from ...database import initialize_analytical_database
+from ...hydration import HydrationPreset
 from ...operational import (
     initialize_operational_database,
     load_cutover_control,
@@ -45,11 +46,20 @@ def build_parser() -> argparse.ArgumentParser:
         prog="codex-usage-tracker",
         description="Exact local Codex usage facts and evidence.",
     )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("setup", help="initialize the kernel cache")
     subparsers.add_parser("status", help="show committed generation status")
     refresh = subparsers.add_parser("refresh", help="start or join refresh")
     refresh.add_argument("--wait", type=float, default=0, metavar="SECONDS")
+    refresh.add_argument(
+        "--preset",
+        choices=tuple(item.value for item in HydrationPreset),
+    )
     for name in ("query", "export"):
         command = subparsers.add_parser(name, help=f"run bounded {name}")
         command.add_argument("--request", required=True, help="JSON request")
@@ -142,7 +152,14 @@ def _run(arguments: argparse.Namespace) -> dict[str, Any] | None:
     if arguments.command == "status":
         return application.status()
     if arguments.command == "refresh":
-        return application.refresh(wait_seconds=arguments.wait)
+        return application.refresh(
+            wait_seconds=arguments.wait,
+            hydration_preset=(
+                HydrationPreset(arguments.preset)
+                if arguments.preset is not None
+                else None
+            ),
+        )
     if arguments.command in {"query", "export"}:
         result = application.query(_request_payload(arguments.request))
         if arguments.command == "export":

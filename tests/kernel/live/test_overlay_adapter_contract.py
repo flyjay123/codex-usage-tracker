@@ -30,7 +30,9 @@ _CONTRACT_PATH = _ROOT / "config" / "kernel-overlay-adapter-v1.json"
 _FIXTURE_PATH = (
     _ROOT / "tests" / "kernel" / "fixtures" / "overlay-adapter-v1.json"
 )
-_DOC_PATH = _ROOT / "docs" / "kernel-overlay-adapter-contract.md"
+_DOC_PATH = (
+    _ROOT / "docs" / "archive" / "spike" / "OVERLAY_ADAPTER_CONTRACT_0_28.md"
+)
 
 
 def _load(path: Path) -> dict:
@@ -211,7 +213,7 @@ def test_contract_routes_work_through_a_real_read_only_loopback_listener(
     launches = []
     application = KernelApplication(
         runtime,
-        worker_launcher=launches.append,
+        worker_launcher=lambda paths, _preset: launches.append(paths),
         source_provider=lambda _home: synthetic_sources(),
     )
     query = application.query(

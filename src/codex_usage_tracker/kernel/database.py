@@ -6,8 +6,9 @@ import hashlib
 import json
 import os
 import sqlite3
+import time
 import uuid
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -55,7 +56,12 @@ def initialize_analytical_database(
 
 
 @contextmanager
-def open_writer(path: Path) -> Iterator[sqlite3.Connection]:
+def open_writer(
+    path: Path,
+    *,
+    require_capabilities: bool = True,
+    staging_bulk: bool = False,
+) -> Iterator[sqlite3.Connection]:
     """Open one short-lived WAL writer with integrity pragmas enabled."""
 
     target = path.resolve()
@@ -65,10 +71,20 @@ def open_writer(path: Path) -> Iterator[sqlite3.Connection]:
     try:
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA foreign_keys = ON")
-        _validate_connection_schema(connection)
+        _validate_connection_schema(
+            connection,
+            require_capabilities=require_capabilities,
+        )
         connection.execute("PRAGMA busy_timeout = 5000")
-        connection.execute("PRAGMA journal_mode = WAL")
-        connection.execute("PRAGMA synchronous = NORMAL")
+        if staging_bulk:
+            connection.execute("PRAGMA journal_mode = OFF")
+            connection.execute("PRAGMA synchronous = OFF")
+            connection.execute("PRAGMA temp_store = MEMORY")
+            connection.execute("PRAGMA cache_size = -262144")
+            connection.execute("PRAGMA locking_mode = EXCLUSIVE")
+        else:
+            connection.execute("PRAGMA journal_mode = WAL")
+            connection.execute("PRAGMA synchronous = NORMAL")
         yield connection
     finally:
         connection.close()
@@ -97,11 +113,22 @@ def open_read_snapshot(path: Path) -> Iterator[sqlite3.Connection]:
 
 
 @contextmanager
-def short_writer_transaction(path: Path) -> Iterator[sqlite3.Connection]:
+def short_writer_transaction(
+    path: Path,
+    *,
+    require_capabilities: bool = True,
+    staging_bulk: bool = False,
+    on_transaction_ms: Callable[[float], None] | None = None,
+) -> Iterator[sqlite3.Connection]:
     """Hold one explicit writer transaction only for the caller's small batch."""
 
-    with open_writer(path) as connection:
+    with open_writer(
+        path,
+        require_capabilities=require_capabilities,
+        staging_bulk=staging_bulk,
+    ) as connection:
         connection.execute("BEGIN IMMEDIATE")
+        started = time.perf_counter()
         try:
             yield connection
         except BaseException:
@@ -109,6 +136,9 @@ def short_writer_transaction(path: Path) -> Iterator[sqlite3.Connection]:
             raise
         else:
             connection.commit()
+        finally:
+            if on_transaction_ms is not None:
+                on_transaction_ms((time.perf_counter() - started) * 1000)
 
 
 def validate_analytical_database(path: Path) -> list[str]:
@@ -211,7 +241,11 @@ def analytical_generation_exists(path: Path, generation: int) -> bool:
     return row is not None
 
 
-def _validate_connection_schema(connection: sqlite3.Connection) -> None:
+def _validate_connection_schema(
+    connection: sqlite3.Connection,
+    *,
+    require_capabilities: bool = True,
+) -> None:
     """Run bounded header/catalog checks before exposing a normal connection."""
 
     version = connection.execute("PRAGMA user_version").fetchone()[0]
@@ -232,7 +266,10 @@ def _validate_connection_schema(connection: sqlite3.Connection) -> None:
         version != SCHEMA_VERSION
         or application_id != APPLICATION_ID
         or tables != ANALYTICAL_TABLES
-        or not objects >= REQUIRED_SCHEMA_OBJECTS
+        or (
+            require_capabilities
+            and not objects >= REQUIRED_SCHEMA_OBJECTS
+        )
     ):
         raise ValueError("analytical database schema identity is invalid")
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from codex_usage_tracker.kernel.interfaces.cli.main import COMMANDS
 from codex_usage_tracker.kernel.interfaces.http.app import API_PREFIX, ROUTES
 from codex_usage_tracker.kernel.interfaces.mcp.catalog import (
@@ -79,16 +81,43 @@ def test_usage_query_schema_allows_compact_guidance_discovery() -> None:
     )
 
 
+def test_usage_query_schema_teaches_closed_named_and_typed_requests() -> None:
+    validate_input(
+        "usage_query",
+        {
+            "requests": [
+                {"template": "top_threads"},
+                {
+                    "dataset": "calls",
+                    "operation": "share",
+                    "dimensions": ["thread"],
+                    "measures": ["total_tokens"],
+                    "limit": 5,
+                },
+            ]
+        },
+    )
+
+    for request in (
+        {"template": "missing"},
+        {"template": "top_threads", "dataset": "calls"},
+        {"template": "top_threads", "allow_partial": True},
+        {"dataset": "calls", "operation": "share", "unknown": True},
+    ):
+        with pytest.raises(ValueError):
+            validate_input("usage_query", {"requests": [request]})
+
+
 def test_release_plugin_declares_one_server_and_is_publishable() -> None:
     plugin = json.loads(
         (_REPO_ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
     )
     mcp = json.loads((_REPO_ROOT / ".mcp.json").read_text(encoding="utf-8"))
 
-    assert plugin["version"] == "0.27.0"
+    assert plugin["version"] == "0.28.0"
     assert plugin["mcpServers"] == "./.mcp.json"
     assert plugin["skills"] == "./skills/"
-    assert plugin["bundle"]["runtime_version"] == "0.27.0"
+    assert plugin["bundle"]["runtime_version"] == "0.28.0"
     assert plugin["bundle"]["publishable"] is True
     assert list(mcp["mcpServers"]) == ["codex-usage-tracker"]
     server = mcp["mcpServers"]["codex-usage-tracker"]

@@ -1,0 +1,443 @@
+# Remaining Clean-Cutover Execution Plan
+
+**Status:** Central execution authority for all remaining delegated work
+
+This file controls readiness, ownership, and parallelism. The phase roadmap is
+[AGENT_FIRST_CLEAN_CUTOVER.md](AGENT_FIRST_CLEAN_CUTOVER.md); completion is in
+[TASK_PACKETS.md](TASK_PACKETS.md). Reconcile any conflict before delegation.
+
+## Current decision
+
+CK-09 remains blocked until CK-08R independently proves semantics, physical
+paging, measurements, and scale. CK-08R0 freezes the exact contracts and
+requalification frontier in `docs/decisions/evidence/ck08r0/corrective-gates-v1.json`.
+Preserve CK-03–CK-08 history and supersede only its four named claims.
+Retained CK-08R3 pre-scale evidence at commit
+`a28e9cdbff8e48d334712a449fdcee111c725673` proved the EvidenceService outer
+query physically unbounded independent of scale profile. CK-08R3A corrected
+that production path in PR #417, passed hosted Python 3.10/3.14 and Console,
+and was squash-merged and exact-main identity verified at
+`38537f6cee42ad4ba2fb6e45354e410053c7a7cd`. The same premerge tree passed
+focused, dual-SQLite, full, package, safety, and review gates. A duplicate
+postmerge full runtime rerun did not complete because the host exhausted disk
+space and SQLite could not create temporary files; no product assertion
+failed, and this environment-only limitation does not override the exact-tree
+and hosted acceptance evidence. CK-08R3 then qualified the separate
+synthetic 100,000-call and 1,316,864-call profiles with `first_failure=null`,
+all 196 selector/view/direction outcomes per profile, typed seven-part truth,
+late-event, truncation, cursor, and query-only contracts. PR #425 passed hosted
+Python 3.10/3.14 and Console, squash-merged at
+`0fad272b3205614fb254398c9c9dc0a56d5ba7cd`, and was exact-main verified.
+CK-08R3 and CK-08R1 are complete. CK-07R1 is complete through its separate
+post-terminal deterministic-evidence roadmap transition, so CK-08R4 is Ready.
+Retained CK-08R1 work reached
+80/80 parity by copying unsupported Q-REV-03/Q-WF-02 semantics; R1A now freezes
+their meaning and closure. R1C is accepted at exact main
+`fb0c57886097a6b985d2f321b2de858cbdfc0a97`; the exact
+[R1B join authority](../decisions/evidence/ck08r1b/answer-semantics-join-authority.json)
+binds the shared query/evidence/grading seams accepted through PR #430;
+CK-08R1B then passed the exact 23-path cohort,
+80/80 production-versus-independent replay, full local/package gates, one
+bounded review, and hosted Python 3.10/3.14 plus Console checks in PR #430;
+it squash-merged and was exact-main verified at
+`9e9332b3ae2be78cedb581ff8f76149ad76f4440`. CK-08R1 requalified all 80
+synthetic variants through separate production and independent closures with
+exact rows, grades, order, evidence, provenance, null semantics, grading
+isolation, and sentinel mutations. Its schema-valid
+[`answer-truth-requalification.v2`](../decisions/evidence/ck08r1/answer-truth-requalification-v2.json)
+passed hosted CI in PR #439, squash-merged, and was exact-main verified at
+`0832b85411e68feb9cf1a7300ab14e4cc97d391a`. The R1B exact reviewer correction
+binds production
+publication hierarchy ownership, independent start/terminal window membership,
+duplicate stable-ID rejection, production-compiler replay, and the Q-REV-03
+direct-fact/internal-formula decision. Its exact selected-cohort acceptance
+correction additionally requires all authoritative late relationships before
+one hierarchy computation and explicit non-null required tool timestamps.
+The final writer-closure correction extends that atomic cohort to 23 paths:
+writer-owned prior-state loading supplies every connected existing ancestor and
+descendant, preparation emits every changed descendant after reparenting, and
+unaffected session rows remain exact. The final multi-publication correction
+retains those 23 paths and binds the remaining closure seam:
+`SessionObserved` native parents seed their exact semantic parent component,
+and persisted/incoming late-parent relations compare event/source coordinates
+so stale replay cannot reverse a newer reparent. Exact replay is idempotent;
+conflicting equal-order parent or basis declarations fail closed. The selected
+cohort now also seeds an existing directly reparented session so its complete
+persisted descendants are recomputed, requires parent/basis/occurrence
+provenance equality for equal-coordinate idempotency, and resolves
+current-batch relations by the six-part authority order before logical
+identity with one emitted winner. PR #430 passed hosted CI, squash-merged, and
+was exact-main verified at `9e9332b3ae2be78cedb581ff8f76149ad76f4440`.
+R1B and R1 are complete. CK-08R4 is the sole Ready successor after CK-07R1's
+post-terminal roadmap dependency completion.
+CK-QG1A removed R2's two page-executor C/B/B violations
+without changing behavior or the frozen maintainability baseline and is
+accepted at exact main `30983d4b5005e7e2a507757c76a3c05ab56281e6`.
+The linked [CK-QG1 exact maintainability baseline transition authority](../decisions/evidence/ckqg1/maintainability-baseline-transition-authority.json)
+permitted only the exact accepted-main writer provenance finding transition.
+PR #392 then passed exact normalized baseline enforcement, full validation,
+review, and hosted Console/Python 3.10/3.14 before squash merge and fresh
+exact-main verification at `68050b9313ccc5be8e1fcd0ccd5b95cb4173f3ff`.
+CK-QG1 is complete; its v2 [writer transition authority](../decisions/evidence/ckqg1/maintainability-baseline-transition-authority.json)
+binds current main `dd771073` writer `13da341f…` to reviewed PR #430 writer
+`d163e6c5…` with the unchanged `fda777e2…` baseline and identical normalized
+findings. CK-08R1B is accepted at `9e9332b3`; CK-08R1's serialized
+production-versus-independent answer-truth requalification is accepted through
+PR #439 and exact-main `0832b854`. CK-08R4 is Ready; CK-08RG remains blocked
+on CK-08R4.
+CK-07R1A is accepted, merged, and exact-main verified at
+`4d8074952f679877f2b4fbb3e89c51015e96a197`; CK-07R1A0 was accepted at
+`519b503aa3b23019033b6481687c08b23fc6c31e`; its linked
+path authority remains preserved read-only. The finite source/runtime,
+run-invocation authority, and argv-correction authority are merged through
+`479cbdbfdd39604fc90eb94777ea0270474adde2`. PR #394 is a stale failed witness: head
+`98a9b5b82951d136644a5fe5f8a70d320131ba08` failed the hosted Python 3.14
+`ordinary.2000_call_tail` gate and is superseded read-only. It must not be
+updated, rerun, or merged. The planner-valid lifecycle receipt is an
+acceptance output of the existing CK-07R1 worker. The coordinator recorded the
+preserved incident disposition and the worker derived the exact candidate
+cohort from exact main `6c08ecd9`: preparation `66c015de…`, benchmark
+`f108dbb4…`, and lifecycle test `4c514889…`. That cohort remains
+permitted-not-accepted and cannot enter `worker_prequalification` until this
+authority transition merges and exact-main verifies.
+The versioned [shared successor overlay](../decisions/evidence/ck07r1a0/shared-successor-overlay-authority-v1.json)
+preserves the accepted CK-08R1B v1, CK-08R1 evidence, and CK-QG1 authority
+bytes and reconciles only their consumers with this atomic CK-07 transition.
+Predecessor-only, exact complete successor, and every mixed, partial, extra, or
+other-digest state remain explicit and fail closed.
+The old frozen-command attempt is preserved exactly as a terminal
+`pre_child_argv_guard_failure` (exit 2 after `0.075241709` seconds, no child or
+runtime evidence), and its old benchmark/test identities cannot be reused.
+Only `(sys.argv[0], *sys.argv[1:]) == LAUNCH_COMMAND[1:]` is authoritative.
+The argv-correction authority is accepted and merged at
+`479cbdbfdd39604fc90eb94777ea0270474adde2`. During its local proof, an
+instrumentation mistake invoked the corrected candidate from the retained V5
+witness and stopped at the child-handshake boundary. It produced only the
+preserved `prelaunch_failed` launch-token ledger, with
+`token_consumed=false`, no successful child/PID/receipt/runtime evidence, and
+no retry. The witness remains read-only. The incident does not authorize a
+launch or replacement worker.
+The first sample, 720-second wrapper timeout, all five underlying budgets,
+one-run ceiling, and every fail-closed rule remain binding. The versioned
+[consuming-boundary authority](../decisions/evidence/ck07r1a0/lifecycle-consuming-boundary-authority-v1.json)
+is the only transition from the already-proven exact
+`worker_prequalification` state to `launch_authorized_once`. It activates only
+after its single hosted-green authority PR is squash-merged and the exact
+merged main is locally verified. Until then no worker may launch. After that
+handoff only existing worker `019fbfe2-8fe4-7de2-9264-d58572366727` may use
+the frozen cwd and exact command to perform exactly one synthetic
+qualification launch with the complete `66c015de…` / `f108dbb4…` /
+`4c514889…` cohort. That ownership is enforced normatively by the coordinator
+resuming the exact existing Codex task and recomputing repository evidence; it
+is not a runtime-authenticated identity and the launcher must not claim a
+cryptographic per-task credential. The hosted Console gate retains Chromium
+dependency/browser coverage, pins the canonical HTTPS Ubuntu archive, and
+fails closed under bounded install/job timeouts rather than accepting a
+stalled or skipped Console result. Historical accepted R3A
+`6689d61f…`, revoked `d192c858…`, mixed cohorts, and every other digest are
+predecessor-only or fail-closed and cannot enter `worker_prequalification`.
+The worker may enter `worker_prequalification` only with the exact selected
+cohort, `post_single_run` only with a complete planner-valid receipt and bound
+dynamic evidence identity, and `final_accepted` only after worker merge and
+exact-main verification. The still-unspent one-run token remains
+`unspent_unavailable` until every immediate prelaunch gate passes. It may then
+be consumed only by the first successfully observed exact child launch and
+handshake; it is non-refundable and authorizes no retry, restart, or
+replacement. All four frozen artifact paths must be absent before launch, and
+any prelaunch failure remains non-consuming. The frozen launcher imports the
+shared-successor verifier before ledger creation or fork; on
+`worker_prequalification`, that verifier requires the complete consuming
+authority, frozen cwd, capacity at or above 10 GiB, and candidate
+`HEAD == refs/remotes/origin/main == live ls-remote origin/main`. Hosted-green
+squash merge remains the repository merge control. The frozen launch lane
+must then fetch and fast-forward only from prequalification base `67bb1a…` to
+the exact merged main, preserving and recomputing the exact three dirty cohort
+bytes before preflight. Reset, rebase, stash, a non-fast-forward transition,
+or any cohort-byte change fails closed; historical V9/V10 witnesses remain
+immutable. Earlier wording that says to
+resume, refresh, or rerun PR #394 is
+historical provenance and does not authorize action. This source-digest
+authority supersedes earlier CK-07R1 wording that says to resume, refresh, or
+rerun PR #394; those retained references are historical provenance and do not
+authorize action.
+
+The exact-main v1 consuming invocation is now a second preserved prelaunch
+incident: after all immediate gates passed, macOS represented the forked
+Python process with the app-bundle executable rather than the lexical venv
+symlink target, so the exact child snapshot was not recognized. The command
+terminated after `6.518352` seconds at `child_start_handshake`, exit 1, with
+the sole durable v1 ledger SHA-256
+`5c2b42eca6a3e54cf4163226bc55f3c75aa35112c4ed0342c11f4e39cb9922be`.
+That ledger is terminal `prelaunch_failed`, `token_consumed=false`, and
+`unspent_unavailable`; no verified child, release, runtime output, stdout,
+stderr, or receipt exists. It is immutable and its command/path set cannot be
+reused. The additive
+[prelaunch-recovery authority](../decisions/evidence/ck07r1a0/lifecycle-prelaunch-recovery-authority-v1.json)
+may admit one corrected v2 invocation by the same worker only after it binds
+the exact corrected cohort, parent/child process-snapshot semantics, preserved
+ledger bytes, non-colliding v2 paths, authority merge, exact-main, and every
+immediate gate. Because no successful child launch occurred, this is the first
+remaining token-funded successful-launch opportunity, not a retry, restart,
+replacement, or refund of a launched process.
+The non-colliding files are the exact
+`output/ck07r1/lifecycle-requalification-v2` output, launch-token ledger,
+stdout, and stderr paths.
+Current CK-08R1 requalification consumers preserve every accepted CK-08
+authority and evidence byte while selecting this recovery bridge only when
+its exact versioned authority exists; predecessor-only and exact complete
+successor states remain explicit, and mixed or partial states fail closed.
+
+The v2 recovery opportunity has now been consumed and is terminal. Exact child
+PID `20482` passed the handshake and consumed the non-refundable token at
+`2026-08-19T19:44:55Z`; the child exited 70 before producing output or a
+receipt. The immutable v2 ledger
+`570e27824ee04a51aa4012adb461bd4aebb00b61541f2477fd9e1665854325a2`
+records `failed_after_launch`, `token_consumed=true`, and no retry, restart, or
+replacement. Its stderr
+`4cf4b10fd04f20a190e4ac41898d25b9295b3dc9d7addead8a81edd27b3aca2f`
+shows that the reachable planner correctly selected `APPEND_SAFE_LARGE` for
+1,369 selected records while the benchmark incorrectly required
+`APPEND_SAFE_SMALL`; the accepted small-tail ceiling remains 32 records.
+The versioned [terminal-failure correction authority](../decisions/evidence/ck07r1a0/lifecycle-terminal-failure-correction-authority-v1.json)
+permits the same worker to correct only the benchmark and its owned lifecycle
+test, with exact planner-selected small/large paths and deterministic
+synthetic non-consuming evidence. It does not reopen either command, refund
+the token, authorize any launch, fabricate a receipt, or make
+`post_single_run` or `final_accepted` reachable. It left CK-07R1 blocked after
+corrective implementation prequalification pending the separate roadmap
+decision now recorded below.
+The linked
+[clean-committed transition authority](../decisions/evidence/ck07r1a0/lifecycle-terminal-failure-clean-commit-authority-v1.json)
+keeps the v1 authority immutable while binding PR #448 base `652f2166…`,
+source head `927aa06f…`, and the exact seven-path cohort. The same bytes may be
+represented only as an all-or-none dirty prepublication delta over the exact
+authority-main tree or as a clean committed PR/integrated delta with exact
+base, scope, and hashes. Neither representation reopens the consumed run or
+changes the existing blocked state.
+
+The additive [clean-committed CI authority v2](../decisions/evidence/ck07r1a0/lifecycle-terminal-failure-clean-commit-authority-v2.json)
+preserves the v1 bridge bytes and binds the clean hosted matrix's
+repository-local `.venv` creation before verification. It recognizes only the
+exact 18-path follow-up authority delta and exact 18-plus-seven integrated
+PR #448 state. This deterministic environment correction does not authorize a
+qualification command, another child, token action, retry, receipt,
+implementation acceptance, or downstream readiness.
+
+PR #448 then passed hosted Console and Python 3.10/3.14, squash-merged its
+exact seven-path correction/evidence cohort, and was fresh exact-main verified
+at `1d0466b1b2992b48c5272dc4598606eeaea4dae2`. The additive
+[post-terminal completion authority](../decisions/evidence/ck07r1a0/lifecycle-post-terminal-completion-authority-v1.json)
+is the explicit roadmap decision reserved by the terminal-failure authority.
+It accepts exact merged deterministic planner reproduction, small/large
+writer-path validation, promotion/recovery/rollback/readability proof,
+independent fold equivalence, full/package checks, one clean implementation
+review, hosted CI, and exact-main identity only for CK-07R1 dependency
+completion. The v2 run remains `failed_after_launch`; the token remains
+consumed and non-refundable; planner-valid receipt and output remain absent;
+`runtime_acceptance=not_claimed`; and `post_single_run` and `final_accepted`
+remain unavailable. No launch, retry, restart, replacement, refund, artifact
+mutation, receipt fabrication, failed-run reclassification, or production
+semantic change is authorized. CK-08R4 is the sole Ready packet and must
+independently measure current merged publication behavior without claiming
+the missing CK-07R1 runtime acceptance. CK-08RG and CK-09 remain blocked.
+
+The exact V11 launcher contract constructs and validates the fully
+overlay/cohort-bound receipt and non-null stdout/stderr/output evidence before
+any first durable `completed` finalization. Evidence
+read/hash/parse/validation/finalization failure is terminal
+`failed_after_launch`, never false `completed`. Temporary parent SIGINT/SIGTERM
+handlers route every wait interruption/error through bounded TERM/KILL/reap
+before terminal persistence and remain installed through evidence, receipt,
+and terminal ledger finalization; originals restore only after the terminal
+state attempt. Every terminal fallback persistence call masks SIGINT/SIGTERM
+with the existing ignore guard and restores the prior temporary handlers
+afterward; the outer final restoration of original handlers remains last. The
+fork child ignores SIGINT/SIGTERM while
+waiting for parent release and maps every pre-release failure to
+`os._exit(71)`; parent cleanup rejects nonpositive PIDs. Unique same-directory
+`mkstemp` ledger updates close and unlink on failed or interrupted
+write/fsync/replace/post-replace paths and persist durable consumed/no-retry
+`failed_after_launch` evidence without temporary residue. It also requires the
+lexical repository-worktree `.venv/bin/python` and matching lexical venv `sys.prefix`; base interpreters,
+symlink/resolved equivalence, wrong-worktree venvs, and prefix mismatch fail
+closed.
+
+## Delegation law
+
+- Delegate only **Ready** child packets; CK-09–CK-16 parents are umbrellas.
+- Use one durable coordinator, one existing task per active packet, and at most
+  one shared-authority task. Sol at medium reasoning owns readiness,
+  integration, collision handling, and gates; bounded deterministic workers
+  normally use the less costly Luna profile at max reasoning. `architect` is
+  read-only.
+- Start at exact dependency-complete `origin/main`, one worktree/branch/PR.
+- After verified merge, create only uncreated newly Ready distinct packets.
+  Reuse the existing packet task for implementation defects, tests,
+  environment setup, validation corrections, review findings, and exact-main
+  reapplication. A new authority task requires a genuinely new policy or
+  contract decision.
+- Every task proactively messages its parent on completion, blocking, or a
+  fail-closed stop. The handoff triggers continuation; do not create polling or
+  wait-only tasks.
+- Exact-main plus repository-relative artifact paths are authoritative.
+  Receivers recompute digests and exact commands from committed manifests
+  instead of trusting multi-hop prompt transcription.
+- Before a one-shot or irreversible operation, prove the exact entry point and
+  process boundary with a real non-consuming integration preflight. Stubbed or
+  in-process tests alone are insufficient.
+- Use bounded subagents inside the active task for focused read-only research,
+  tests, or one independent review. Durable tasks represent independent
+  ownership, not every intermediate correction.
+- Classify blockers as implementation, authority, environment, or external.
+  Once crash integrity is restored, leave recovery mode and return to this
+  convergence topology.
+- One integrator owns shared authority/schema/registry/publication/package/
+  release/final evidence; parallel writes are disjoint.
+- Producers name artifact, consumer seam, independent truth, and executable
+  comparison. Disproved premises stop dependents and retain reproduction,
+  digest, and measurements; never weaken gates or hide failed prototypes.
+- Synthetic fixtures only; no real Codex bodies, secrets, or private/local
+  databases. Task names use `<role> <short-scope>`.
+
+## Shared-file integration locks
+
+Only one integrator may own a lock at a time:
+
+| Lock | Files or interfaces |
+| --- | --- |
+| Authority | `AGENTS.md`, `docs/INDEX.md`, roadmap, this plan, ledger, qualification plan, parent packets |
+| Query physical | request/result contracts, query registry/compiler bindings, cursor version |
+| Evidence physical | `EvidenceService` fixed page SQL, scope-to-branch selection, bound parameters, focused physical tests |
+| Publication physical | analytical DDL, projection registry, writer/preparation integration ports |
+| Installed surface | application envelope, MCP catalog, plugin manifest, `.mcp.json`, entry points |
+| Qualification | candidate hashes, fixture identity, scorecard/evidence schemas, final aggregates |
+| Cutover/release | package membership, CI, version fields, release workflow and artifact manifest |
+
+## Parallel wave summary
+
+The machine DAG below controls readiness and dependencies; each child packet controls its owner and scope. Only these fan-outs are allowed:
+
+- CK-08R0 -> CK-08R2/CK-08R3A; CK-08R1A -> CK-08R1B/R1C
+  -> CK-08R1; CK-08R2 -> CK-QG1A0 -> CK-QG1A -> CK-QG1;
+  CK-08R3A -> CK-08R3;
+  CK-07R1A -> CK-07R1A0 -> CK-07R1;
+  join at CK-08R4/CK-08RG.
+- CK-09-01 -> CK-09-02/03/04; join at CK-09-05.
+- CK-10-01 -> CK-10-02 and CK-10-04; CK-10-03 follows 10-02; join at 10-05.
+- CK-11-01 -> CK-11-02/03; join at CK-11-04.
+- CK-12-01 -> CK-12-02/03/04/05; join at CK-12-06.
+- CK-14-01 -> CK-14-02/03; join at CK-14-04. CK-15 is optional and CK-16 remains gated.
+
+All other edges are serialized. `Ready` authorizes creation; `Conditional Ready` requires its machine gate; `Blocked` forbids creation and implementation.
+
+## Machine-readable delegation DAG
+
+Tests bind this manifest to the ledger, child files, statuses, known
+dependencies, and acyclic order. Conditional policy gates such as optional
+CK-15 selection and maintainer publication approval remain stricter prose
+conditions in the table and child files; they are not unconditional DAG edges.
+
+<!-- delegated-task-dag:start -->
+```json
+{
+ "schema": "codex-usage-tracker.remaining-delegation-dag.v1",
+ "orchestration": {
+  "mode": "self-propagating-convergence",
+  "spawn": "newly_ready_distinct_packets_only",
+  "join": "all_dependencies_complete",
+  "duplicate_policy": "one_active_task_per_packet_and_dependency_frontier",
+  "continuation_policy": "reuse_existing_task_for_same_packet",
+  "authority_policy": "new_task_only_for_new_policy_or_contract_decision",
+  "handoff_policy": "proactive_parent_handoff_from_repository_verified_state",
+  "identity_policy": "worker_ownership_is_normative_coordinator_thread_binding_plus_exact_repository_evidence_not_runtime_authentication",
+  "one_shot_policy": "real_non_consuming_preflight_before_authorized_attempt",
+  "recovery_exit_policy": "return_to_convergence_after_integrity_restored",
+  "blocked_policy": "spawn_none_and_report_to_orchestrator"
+ },
+  "completed": ["CK-08R0", "CK-08R1A", "CK-08R1B", "CK-08R1C", "CK-08R1", "CK-08R2", "CK-08R3A", "CK-08R3", "CK-QG1A0", "CK-QG1A", "CK-QG1", "CK-07R1A", "CK-07R1A0", "CK-07R1"],
+  "ready": ["CK-08R4"],
+  "conditional_ready": [],
+  "blocked": [],
+  "tasks": [
+    {"id": "CK-08R0", "file": "tasks/ck-08r0-freeze-corrective-contracts.md", "dependencies": []},
+    {"id": "CK-08R1A", "file": "tasks/ck-08r1a-freeze-answer-semantics.md", "dependencies": ["CK-08R0"]},
+    {"id": "CK-08R1B", "file": "tasks/ck-08r1b-implement-production-answer-semantics.md", "dependencies": ["CK-08R1A"]},
+    {"id": "CK-08R1C", "file": "tasks/ck-08r1c-build-independent-semantic-evaluator.md", "dependencies": ["CK-08R1A"]},
+    {"id": "CK-08R1", "file": "tasks/ck-08r1-build-independent-answer-truth.md", "dependencies": ["CK-08R1B", "CK-08R1C"]},
+    {"id": "CK-08R2", "file": "tasks/ck-08r2-implement-physical-keyset-execution.md", "dependencies": ["CK-08R0"]},
+    {"id": "CK-08R3A", "file": "tasks/ck-08r3a-implement-evidence-physical-query.md", "dependencies": ["CK-08R0"]},
+    {"id": "CK-08R3", "file": "tasks/ck-08r3-qualify-evidence-scale.md", "dependencies": ["CK-08R3A"]},
+    {"id": "CK-07R1A", "file": "tasks/ck-07r1a-correct-hosted-lifecycle-tail.md", "dependencies": ["CK-08R0"]},
+    {"id": "CK-07R1A0", "file": "tasks/ck-07r1a0-freeze-lifecycle-path-authority.md", "dependencies": ["CK-QG1A0", "CK-07R1A"]},
+    {"id": "CK-07R1", "file": "tasks/ck-07r1-correct-lifecycle-preparation-scale.md", "dependencies": ["CK-07R1A0"]},
+    {"id": "CK-QG1A0", "file": "tasks/ck-qg1a0-authorize-page-executor-source-supersession.md", "dependencies": ["CK-08R2"]},
+    {"id": "CK-QG1A", "file": "tasks/ck-qg1a-correct-page-executor-complexity.md", "dependencies": ["CK-QG1A0"]},
+    {"id": "CK-QG1", "file": "tasks/ck-qg1-enforce-agent-kernel-maintainability.md", "dependencies": ["CK-QG1A"]},
+    {"id": "CK-08R4", "file": "tasks/ck-08r4-reclassify-physical-plans.md", "dependencies": ["CK-08R1", "CK-08R2", "CK-08R3", "CK-07R1"]},
+    {"id": "CK-08RG", "file": "tasks/ck-08rg-authorize-ck09-resumption.md", "dependencies": ["CK-08R4", "CK-QG1"]},
+    {"id": "CK-09-01", "file": "tasks/ck-09-01-freeze-residual-projection-registry.md", "dependencies": ["CK-08RG"]},
+    {"id": "CK-09-02", "file": "tasks/ck-09-02-implement-usage-time-hierarchy-projections.md", "dependencies": ["CK-09-01"]},
+    {"id": "CK-09-03", "file": "tasks/ck-09-03-implement-workflow-tool-projections.md", "dependencies": ["CK-09-01"]},
+    {"id": "CK-09-04", "file": "tasks/ck-09-04-implement-allowance-evidence-projections.md", "dependencies": ["CK-09-01"]},
+    {"id": "CK-09-05", "file": "tasks/ck-09-05-bind-projection-backed-named-plans.md", "dependencies": ["CK-09-02", "CK-09-03", "CK-09-04"]},
+    {"id": "CK-09-06", "file": "tasks/ck-09-06-integrate-and-qualify-projections.md", "dependencies": ["CK-09-05"]},
+    {"id": "CK-10-01", "file": "tasks/ck-10-01-freeze-application-interface-contracts.md", "dependencies": ["CK-09-06"]},
+    {"id": "CK-10-02", "file": "tasks/ck-10-02-implement-setup-refresh-status-services.md", "dependencies": ["CK-10-01"]},
+    {"id": "CK-10-03", "file": "tasks/ck-10-03-implement-cli-and-mcp-adapters.md", "dependencies": ["CK-10-02"]},
+    {"id": "CK-10-04", "file": "tasks/ck-10-04-build-plugin-and-usage-skill.md", "dependencies": ["CK-10-01"]},
+    {"id": "CK-10-05", "file": "tasks/ck-10-05-integrate-installed-surface.md", "dependencies": ["CK-10-02", "CK-10-03", "CK-10-04"]},
+    {"id": "CK-11-01", "file": "tasks/ck-11-01-freeze-installed-harness-contract.md", "dependencies": ["CK-10-05"]},
+    {"id": "CK-11-02", "file": "tasks/ck-11-02-build-artifact-and-cli-trial-runner.md", "dependencies": ["CK-11-01"]},
+    {"id": "CK-11-03", "file": "tasks/ck-11-03-build-desktop-lower-model-trial-runner.md", "dependencies": ["CK-11-01"]},
+    {"id": "CK-11-04", "file": "tasks/ck-11-04-integrate-installed-agent-scorecard.md", "dependencies": ["CK-11-02", "CK-11-03"]},
+    {"id": "CK-12-01", "file": "tasks/ck-12-01-freeze-qualification-candidate.md", "dependencies": ["CK-11-04"]},
+    {"id": "CK-12-02", "file": "tasks/ck-12-02-run-correctness-query-evidence-qualification.md", "dependencies": ["CK-12-01"]},
+    {"id": "CK-12-03", "file": "tasks/ck-12-03-run-performance-storage-payload-qualification.md", "dependencies": ["CK-12-01"]},
+    {"id": "CK-12-04", "file": "tasks/ck-12-04-run-concurrency-crash-recovery-qualification.md", "dependencies": ["CK-12-01"]},
+    {"id": "CK-12-05", "file": "tasks/ck-12-05-run-artifact-agent-qualification.md", "dependencies": ["CK-12-01"]},
+    {"id": "CK-12-06", "file": "tasks/ck-12-06-integrate-hardening-decision.md", "dependencies": ["CK-12-02", "CK-12-03", "CK-12-04", "CK-12-05"]},
+    {"id": "CK-13-01", "file": "tasks/ck-13-01-freeze-cutover-rollback-drill.md", "dependencies": ["CK-12-06"]},
+    {"id": "CK-13-02", "file": "tasks/ck-13-02-switch-public-entry-points.md", "dependencies": ["CK-13-01"]},
+    {"id": "CK-13-03", "file": "tasks/ck-13-03-verify-cutover-approve-retirement.md", "dependencies": ["CK-13-02"]},
+    {"id": "CK-14-01", "file": "tasks/ck-14-01-freeze-retention-deletion-manifest.md", "dependencies": ["CK-13-03"]},
+    {"id": "CK-14-02", "file": "tasks/ck-14-02-delete-spike-runtime.md", "dependencies": ["CK-14-01"]},
+    {"id": "CK-14-03", "file": "tasks/ck-14-03-delete-console-frontend-node.md", "dependencies": ["CK-14-01"]},
+    {"id": "CK-14-04", "file": "tasks/ck-14-04-integrate-package-ci-cleanup.md", "dependencies": ["CK-14-02", "CK-14-03"]},
+    {"id": "CK-15-01", "file": "tasks/ck-15-01-decide-native-presentation-admission.md", "dependencies": ["CK-14-04"]},
+    {"id": "CK-15-02", "file": "tasks/ck-15-02-implement-qualify-native-presentation.md", "dependencies": ["CK-15-01"]},
+    {"id": "CK-16-01", "file": "tasks/ck-16-01-freeze-release-scope-version.md", "dependencies": ["CK-14-04"]},
+    {"id": "CK-16-02", "file": "tasks/ck-16-02-write-public-docs-synthetic-assets.md", "dependencies": ["CK-16-01"]},
+    {"id": "CK-16-03", "file": "tasks/ck-16-03-build-once-qualify-release-candidate.md", "dependencies": ["CK-16-02"]},
+    {"id": "CK-16-04", "file": "tasks/ck-16-04-publish-verify-public-artifacts.md", "dependencies": ["CK-16-03"]}
+  ]
+}
+```
+<!-- delegated-task-dag:end -->
+
+If CK-09-01 admits no projection in a family, that family task closes as
+`Not needed` with evidence and no production diff. If CK-15-01 defers native
+presentation, CK-15-02 closes the same way and does not block CK-16.
+
+## Phase completion gates
+
+- CK-09 becomes ready only through CK-08RG. No fixed projection count is
+  authoritative before CK-08R4.
+- CK-10 starts only after CK-09-06 is merged, hosted CI is green, and exact
+  `main` is verified.
+- CK-11 starts only from the coherent CK-10 wheel/plugin/skill candidate.
+- CK-12 lanes consume one immutable candidate and fixture digest. A semantic
+  fix invalidates the affected lanes and creates a bounded follow-up; no lane
+  edits the candidate while other lanes measure it.
+- CK-13 starts only after CK-12 accepts every hard gate.
+- CK-14 deletion starts only after CK-13 proves reinstall/rollback and the
+  maintainer approves runtime retirement.
+- CK-15 is optional. It blocks release only when CK-15-01 explicitly selects
+  it into the release candidate.
+- CK-16-04 is an approval-gated public action. No task may publish from a local
+  rebuild or mutate already published bytes.
+
+## Handoff minimum
+
+Record exact SHA, PR/CI, ownership, artifact/digest, consumer/truth, validation/
+first noise, reviewer/risks, orchestrator ID, and Ready/created task/host IDs
+with frontier. Receivers verify authority first.

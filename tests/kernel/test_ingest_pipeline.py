@@ -7,6 +7,7 @@ import pytest
 
 from codex_usage_tracker.kernel import ingest, operational, writer
 from codex_usage_tracker.kernel.ingest import KernelIngestor, RefreshTrigger
+from codex_usage_tracker.kernel.lease import RefreshLeaseRepository
 from codex_usage_tracker.kernel.models import CutoverState
 from codex_usage_tracker.kernel.operational import (
     kernel_paths,
@@ -16,13 +17,9 @@ from codex_usage_tracker.kernel.operational import (
 
 def _token_line(event_id: str, value: int) -> str:
     return (
-        '{"event_id":"'
-        + event_id
-        + '","timestamp":"2026-01-01T00:00:01Z","type":"event_msg",'
+        '{"event_id":"' + event_id + '","timestamp":"2026-01-01T00:00:01Z","type":"event_msg",'
         '"payload":{"type":"token_count","info":{"last_token_usage":'
-        '{"input_tokens":'
-        + str(value)
-        + ',"cached_input_tokens":1,"output_tokens":2,'
+        '{"input_tokens":' + str(value) + ',"cached_input_tokens":1,"output_tokens":2,'
         '"reasoning_output_tokens":1,"total_tokens":'
         + str(value + 2)
         + '},"model_context_window":200000}}}\n'
@@ -161,9 +158,7 @@ def test_source_appended_during_hydration_is_caught_before_promotion(
     assert second.planner_reason == "no_changes"
     assert second.inserted_calls == 0
     with sqlite3.connect(paths.analytical) as connection:
-        assert connection.execute(
-            "SELECT COUNT(*) FROM model_calls"
-        ).fetchone()[0] == 2
+        assert connection.execute("SELECT COUNT(*) FROM model_calls").fetchone()[0] == 2
 
 
 def test_initial_hydration_normalizes_bounded_batches(
@@ -183,9 +178,14 @@ def test_initial_hydration_normalizes_bounded_batches(
     observed_batch_sizes: list[int] = []
     real_normalize = ingest.normalize_batch
 
-    def record_batch(plan, parsed, *, generation):
+    def record_batch(plan, parsed, *, generation, thread_labels=None):
         observed_batch_sizes.append(parsed.parsed_line_count)
-        return real_normalize(plan, parsed, generation=generation)
+        return real_normalize(
+            plan,
+            parsed,
+            generation=generation,
+            thread_labels=thread_labels,
+        )
 
     monkeypatch.setattr(ingest, "normalize_batch", record_batch)
     paths = kernel_paths(tmp_path / "cache")
@@ -198,6 +198,65 @@ def test_initial_hydration_normalizes_bounded_batches(
     assert result.inserted_calls == 2500
     assert len(observed_batch_sizes) >= 3
     assert max(observed_batch_sizes) <= 1000
+    with sqlite3.connect(paths.analytical) as connection:
+        assert (
+            connection.execute(
+                "SELECT SUM(model_call_count) FROM turns",
+            ).fetchone()[0]
+            == 2500
+        )
+
+
+def test_initial_hydration_reports_advancing_write_and_index_progress(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = tmp_path / "sessions" / "rollout-progress.jsonl"
+    source.parent.mkdir()
+    source.write_text(
+        '{"timestamp":"2026-01-01T00:00:00Z","type":"session_meta",'
+        '"payload":{"id":"synthetic-progress-session"}}\n'
+        '{"timestamp":"2026-01-01T00:00:00Z","type":"turn_context",'
+        '"payload":{"turn_id":"turn-1","model":"gpt-synthetic","effort":"low"}}\n'
+        + "".join(_token_line(f"event-{index}", 1) for index in range(2500)),
+        encoding="utf-8",
+    )
+    observed: list[tuple[str, float]] = []
+    real_progress = RefreshLeaseRepository.progress
+
+    def record_progress(
+        self: RefreshLeaseRepository,
+        refresh_run_id: str,
+        owner_id: str,
+        *,
+        stage: str,
+        percent: float,
+        **kwargs: object,
+    ) -> None:
+        observed.append((stage, percent))
+        real_progress(
+            self,
+            refresh_run_id,
+            owner_id,
+            stage=stage,
+            percent=percent,
+            **kwargs,
+        )
+
+    monkeypatch.setattr(RefreshLeaseRepository, "progress", record_progress)
+    paths = kernel_paths(tmp_path / "cache")
+    KernelIngestor(paths.analytical, paths.operational).refresh(
+        [source],
+        trigger=RefreshTrigger.CLI_REFRESH,
+        owner_id="owner-1",
+    )
+
+    writing = [percent for stage, percent in observed if stage == "writing"]
+    assert writing[0] == 45
+    assert writing[-1] > writing[0]
+    assert writing == sorted(writing)
+    assert ("indexing", 84) in observed
+    assert ("validating", 87) in observed
 
 
 def test_append_promotion_never_hashes_full_analytical_artifact(
@@ -282,9 +341,5 @@ def test_partial_batch_crash_retries_same_generation_idempotently(
     assert recovered.inserted_calls == 600
     assert load_cutover_control(paths.operational).state is CutoverState.ACTIVE
     with sqlite3.connect(paths.analytical) as connection:
-        assert connection.execute(
-            "SELECT COUNT(*) FROM generations"
-        ).fetchone()[0] == 1
-        assert connection.execute(
-            "SELECT COUNT(*) FROM model_calls"
-        ).fetchone()[0] == 600
+        assert connection.execute("SELECT COUNT(*) FROM generations").fetchone()[0] == 1
+        assert connection.execute("SELECT COUNT(*) FROM model_calls").fetchone()[0] == 600

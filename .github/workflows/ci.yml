@@ -36,7 +36,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Verify audited main base
-        if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'release/0.27.0'
+        if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'release/0.28.0'
         env:
           ACTUAL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -47,6 +47,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install ".[dev]"
+          python -m venv --system-site-packages .venv
       - name: Verify kernel phase
         env:
           MATRIX_PYTHON: ${{ matrix.python-version }}
@@ -57,17 +58,17 @@ jobs:
           python -m ruff check .
           python -m mypy
           python scripts/check_kernel_maintainability.py
-          if [ "$MATRIX_PYTHON" = "3.14" ]; then
-            python -m pytest -p no:tach
-          else
-            python -m pytest -p no:tach \
-              --ignore=tests/kernel/test_ingest_performance.py
-          fi
+          python -m pytest -p no:tach \
+            --ignore=tests/kernel/test_ingest_performance.py \
+            --ignore=tests/kernel/allowance/test_performance.py \
+            --ignore=tests/kernel/evidence/test_performance.py \
+            --ignore=tests/kernel/interfaces/test_performance.py \
+            --ignore=tests/kernel/query/test_performance.py
           python -m pyright --pythonpath "$(command -v python)"
           python scripts/check_release.py
-      - name: Run synthetic performance contracts
+      - name: Run synthetic scale invariants
         if: matrix.python-version == '3.14'
-        run: python -m pytest -p no:tach tests/kernel/test_ingest_performance.py
+        run: python scripts/run_performance_suite.py --lane invariants
       - name: Build isolated development package
         if: matrix.python-version == '3.14'
         run: |
@@ -75,13 +76,19 @@ jobs:
           python scripts/check_release.py --dist
           python scripts/smoke_installed_package.py \
             --artifact-dir dist \
-            --version 0.27.0
+            --version 0.28.0 \
+            --upgrade-from 0.26.0
+          python scripts/smoke_installed_package.py \
+            --artifact-dir dist \
+            --version 0.28.0 \
+            --upgrade-from 0.27.0
       - name: Whitespace
         run: git diff --check
 
   console:
     name: Focused Evidence Console
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -98,6 +105,13 @@ jobs:
         run: |
           python -m pip install ".[dev]"
           npm ci --ignore-scripts
+      - name: Pin Ubuntu archive for browser dependencies
+        run: |
+          printf '%s\n' 'https://archive.ubuntu.com/ubuntu' \
+            | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+      - name: Install Chromium
+        timeout-minutes: 10
+        run: |
           npx playwright install --with-deps chromium
       - name: Verify deterministic Console
         run: |

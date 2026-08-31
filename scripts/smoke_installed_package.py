@@ -295,11 +295,13 @@ def _assert_dogfood_results(results: list[object]) -> None:
         != 360
     ):
         raise RuntimeError("installed MCP comparison differs from the oracle")
-    if (
-        sum(int(row["tools"]) for row in tool_rows) != 2
-        or sum(int(row["turns"]) for row in turn_rows) != 5
-    ):
-        raise RuntimeError("installed MCP structural totals differ from the oracle")
+    actual_tools = sum(int(row["tools"]) for row in tool_rows)
+    actual_turns = sum(int(row["turns"]) for row in turn_rows)
+    if actual_tools != 2 or actual_turns != 4:
+        raise RuntimeError(
+            "installed MCP structural totals differ from the oracle: "
+            f"tools={actual_tools}, turns={actual_turns}"
+        )
 
 
 def _result_rows(
@@ -336,6 +338,8 @@ def _installed_mcp_command(
 def _smoke_mcp(
     config_path: Path,
     environment: dict[str, str],
+    *,
+    expected_generation: int,
 ) -> None:
     command = _installed_mcp_command(config_path, environment)
     for task_number in range(2):
@@ -390,7 +394,7 @@ def _smoke_mcp(
                 or job.get("state") != "completed"
                 or not isinstance(result, dict)
                 or result.get("planner_reason") != "no_changes"
-                or result.get("generation") != 1
+                or result.get("generation") != expected_generation
                 or result.get("inserted_calls") != 0
             ):
                 raise RuntimeError(
@@ -451,12 +455,12 @@ def _smoke_mcp(
                 for item in results
                 if isinstance(item, dict)
             )
-            if generations != {1}:
+            if generations != {expected_generation}:
                 raise RuntimeError(
                     f"fresh MCP task {task_number + 1} mixed generations: "
                     f"{generations}"
                 )
-            if allowance.get("generation") not in {None, 1}:
+            if allowance.get("generation") not in {None, expected_generation}:
                 raise RuntimeError(
                     f"fresh MCP task {task_number + 1} allowance generation "
                     f"is invalid: {allowance.get('generation')}"
@@ -468,6 +472,8 @@ def _smoke_mcp(
 def _smoke_service(
     command: Path,
     environment: dict[str, str],
+    *,
+    expected_generation: int,
 ) -> float:
     port = _free_port()
     server = subprocess.Popen(
@@ -494,7 +500,10 @@ def _smoke_service(
         status = json.loads(
             _await(f"http://127.0.0.1:{port}/api/kernel/v1/status")
         )
-        if status.get("state") != "active" or status.get("generation") != 1:
+        if (
+            status.get("state") != "active"
+            or status.get("generation") != expected_generation
+        ):
             raise RuntimeError(f"installed service status is invalid: {status}")
     finally:
         server.terminate()
@@ -506,14 +515,36 @@ def _smoke_service(
     return warm_p95_ms
 
 
-def smoke_install(target: str, *, version: str | None = None) -> None:
+def smoke_install(
+    target: str,
+    *,
+    version: str | None = None,
+    upgrade_from: str | None = None,
+) -> None:
     with tempfile.TemporaryDirectory(prefix="kernel-installed-smoke-") as name:
         root = Path(name)
         venv_root = root / "venv"
         venv.EnvBuilder(with_pip=True, clear=True).create(venv_root)
         python = _python(venv_root)
+        initial_target = (
+            (
+                str(Path(upgrade_from).resolve())
+                if Path(upgrade_from).is_file()
+                else f"{DISTRIBUTION_NAME}=={upgrade_from}"
+            )
+            if upgrade_from is not None
+            else target
+        )
         subprocess.run(
-            [python, "-m", "pip", "install", "--quiet", "--no-deps", target],
+            [
+                python,
+                "-m",
+                "pip",
+                "install",
+                "--quiet",
+                "--no-deps",
+                initial_target,
+            ],
             check=True,
         )
         codex_home = root / "codex"
@@ -532,6 +563,37 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
             + os.pathsep
             + environment.get("PATH", "")
         )
+        prior_cache: dict[Path, bytes] | None = None
+        if upgrade_from is not None:
+            _run_json(
+                [command, "refresh", "--wait", "30"],
+                environment=environment,
+                timeout=40,
+            )
+            prior = _run_json([command, "status"], environment=environment)
+            if prior.get("state") != "active" or prior.get("generation") != 1:
+                raise RuntimeError(
+                    f"upgrade base did not activate generation 1: {prior}"
+                )
+            prior_cache = {
+                path.relative_to(cache_root): path.read_bytes()
+                for path in cache_root.rglob("*")
+                if path.is_file()
+            }
+            subprocess.run(
+                [
+                    python,
+                    "-m",
+                    "pip",
+                    "install",
+                    "--quiet",
+                    "--no-deps",
+                    "--upgrade",
+                    "--force-reinstall",
+                    target,
+                ],
+                check=True,
+            )
         plugin_root = root / "plugin"
         (plugin_root / ".codex-plugin").mkdir(parents=True)
         shutil.copy2(
@@ -541,10 +603,25 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
         shutil.copy2(REPO_ROOT / ".mcp.json", plugin_root / ".mcp.json")
 
         initial = _run_json([command, "status"], environment=environment)
-        if initial.get("state") != "absent" or cache_root.exists():
-            raise RuntimeError(
-                "clean installed status must stay absent and read-only"
-            )
+        if upgrade_from is None:
+            if initial.get("state") != "absent" or cache_root.exists():
+                raise RuntimeError(
+                    "clean installed status must stay absent and read-only"
+                )
+        else:
+            current_cache = {
+                path.relative_to(cache_root): path.read_bytes()
+                for path in cache_root.rglob("*")
+                if path.is_file()
+            }
+            if (
+                initial.get("state") != "active"
+                or initial.get("generation") != 1
+                or current_cache != prior_cache
+            ):
+                raise RuntimeError(
+                    "installed upgrade changed the active cache before refresh"
+                )
         help_text = subprocess.run(
             [command, "--help"],
             check=True,
@@ -554,6 +631,19 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
         ).stdout
         if any(name not in help_text for name in CLI_HELP_SUBCOMMANDS):
             raise RuntimeError("installed CLI catalog is incomplete")
+        package = _run_json([command, "package"], environment=environment)
+        installed_version = package.get("version")
+        version_text = subprocess.run(
+            [command, "--version"],
+            check=True,
+            capture_output=True,
+            env=environment,
+            text=True,
+        ).stdout.strip()
+        if version_text != f"codex-usage-tracker {installed_version}":
+            raise RuntimeError(
+                f"installed CLI version differs: {version_text}"
+            )
         installed_root = next(
             python.parent.parent.glob(
                 "lib/python*/site-packages/codex_usage_tracker"
@@ -568,16 +658,19 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
             raise RuntimeError(
                 f"installed package resources are missing: {missing_resources}"
             )
-        package = _run_json([command, "package"], environment=environment)
         if version is not None and package.get("version") != version:
             raise RuntimeError(f"installed version differs: {package}")
         _run_json(
-            [command, "refresh", "--wait", "30"],
+            [command, "refresh", "--wait", "30", "--preset", "complete"],
             environment=environment,
             timeout=40,
         )
         active = _run_json([command, "status"], environment=environment)
-        if active.get("state") != "active" or active.get("generation") != 1:
+        expected_generation = 2 if upgrade_from is not None else 1
+        if (
+            active.get("state") != "active"
+            or active.get("generation") != expected_generation
+        ):
             raise RuntimeError(f"installed refresh did not activate: {active}")
         content_status = _run_json(
             [command, "content", "status"],
@@ -595,7 +688,7 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
         )
         indexed_events = content_index.get("events")
         if (
-            content_index.get("indexed_generation") != 1
+            content_index.get("indexed_generation") != expected_generation
             or not isinstance(indexed_events, int)
             or indexed_events < 1
         ):
@@ -634,10 +727,18 @@ def smoke_install(target: str, *, version: str | None = None) -> None:
         )
         if _run_json([command, "status"], environment=environment).get(
             "generation"
-        ) != 1:
+        ) != expected_generation:
             raise RuntimeError("content deletion affected installed accounting")
-        _smoke_mcp(plugin_root / ".mcp.json", environment)
-        warm_p95_ms = _smoke_service(command, environment)
+        _smoke_mcp(
+            plugin_root / ".mcp.json",
+            environment,
+            expected_generation=expected_generation,
+        )
+        warm_p95_ms = _smoke_service(
+            command,
+            environment,
+            expected_generation=expected_generation,
+        )
     print(
         "Installed kernel package smoke passed "
         f"(two fresh MCP tasks; warm Console p95 {warm_p95_ms:.3f} ms)."
@@ -649,12 +750,20 @@ def main() -> int:
     parser.add_argument("--from-pypi", action="store_true")
     parser.add_argument("--version")
     parser.add_argument("--artifact-dir", type=Path)
+    parser.add_argument(
+        "--upgrade-from",
+        help="public version or local wheel used to create the pre-upgrade cache",
+    )
     arguments = parser.parse_args()
     if arguments.from_pypi and arguments.artifact_dir is not None:
         parser.error("--from-pypi and --artifact-dir are mutually exclusive")
     with tempfile.TemporaryDirectory(prefix="kernel-smoke-build-") as name:
         target = _resolve_install_target(arguments, Path(name))
-        smoke_install(target, version=arguments.version)
+        smoke_install(
+            target,
+            version=arguments.version,
+            upgrade_from=arguments.upgrade_from,
+        )
     return 0
 
 

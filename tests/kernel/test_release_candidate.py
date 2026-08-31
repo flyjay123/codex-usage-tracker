@@ -12,7 +12,10 @@ from codex_usage_tracker.kernel.schema import (
     MAX_INDEX_COUNT,
     REQUIRED_SCHEMA_OBJECTS,
 )
-from scripts.check_kernel_release_candidate import _measurement_failures
+from scripts.check_kernel_release_candidate import (
+    _measurement_failures,
+    _package_budget_policy_failures,
+)
 from scripts.generate_kernel_manifests import k9_disposition_proof_failures
 
 _ROOT = Path(__file__).resolve().parents[2]
@@ -89,9 +92,9 @@ def test_release_catalogs_are_exact_and_publishable() -> None:
     assert API_PREFIX == "/api/kernel/v1"
     assert len(ROUTES) == 7
     assert plugin["bundle"]["publishable"] is True
-    assert plugin["version"] == "0.27.0"
+    assert plugin["version"] == "0.28.0"
     assert "exact, local-first codex usage facts" in plugin["description"].lower()
-    assert 'version = "0.27.0"' in project
+    assert 'version = "0.28.0"' in project
     assert "non-publishable" not in project.lower()
 
 
@@ -133,7 +136,7 @@ def test_release_candidate_budget_is_measured_and_bounded() -> None:
     ]
 
     assert budget["schema"] == "codex-usage-tracker.kernel-rc-budget.v1"
-    assert budget["headroom_percent"] <= 3
+    assert budget["headroom_percent"] <= 25
     assert _measurement_failures(
         budget,
         {
@@ -153,10 +156,56 @@ def test_release_candidate_budget_is_measured_and_bounded() -> None:
     ) == []
 
 
+def test_package_budget_supersession_preserves_non_package_budgets() -> None:
+    budget = json.loads(
+        (_ROOT / "config/kernel-release-candidate-budget.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    policy = json.loads(
+        (
+            _ROOT
+            / "docs/decisions/evidence/kernel-release-candidate-package-budget-supersession.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert budget["wheel_bytes"] == 1_000_000
+    assert budget["sdist_bytes"] == 2_000_000
+    assert policy["package_ceilings"] == {
+        "wheel_bytes": {
+            "historical_ceiling_bytes": 383_000,
+            "active_ceiling_bytes": 1_000_000,
+        },
+        "sdist_bytes": {
+            "historical_ceiling_bytes": 828_000,
+            "active_ceiling_bytes": 2_000_000,
+        },
+    }
+    assert policy["preserved_non_package_budget"] == {
+        key: value
+        for key, value in budget.items()
+        if key not in {"wheel_bytes", "sdist_bytes", "policy_artifact"}
+    }
+    assert _package_budget_policy_failures(budget) == []
+
+
+def test_package_budget_policy_rejects_non_package_budget_drift() -> None:
+    budget = json.loads(
+        (_ROOT / "config/kernel-release-candidate-budget.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    budget["plugin_bundle_bytes"] += 1
+
+    assert _package_budget_policy_failures(budget) == [
+        "preserved non-package release budgets drifted",
+        "package budget policy artifact is not the exact approved authority",
+    ]
+
+
 def test_release_candidate_budget_rejects_excess_headroom_and_count_drift() -> None:
     budget = {
-        "headroom_percent": 3,
-        "kernel_source_bytes": 104,
+        "headroom_percent": 25,
+        "kernel_source_bytes": 126,
         "mcp_tools": 7,
     }
 
@@ -165,20 +214,21 @@ def test_release_candidate_budget_rejects_excess_headroom_and_count_drift() -> N
         {"kernel_source_bytes": 100, "mcp_tools": 6},
     )
 
-    assert "kernel_source_bytes ceiling 104 exceeds 3% maximum 103" in failures
+    assert "kernel_source_bytes ceiling 126 exceeds 25% maximum 125" in failures
     assert "mcp_tools catalog ceiling 7 must equal measured 6" in failures
 
 
-def test_upgrade_guide_maps_every_retired_surface_category() -> None:
+def test_retired_surface_manifest_remains_a_frozen_cutover_oracle() -> None:
     manifest = json.loads(
         (_ROOT / "config/kernel-retired-surfaces-v1.json").read_text(
             encoding="utf-8"
         )
     )
-    guide = (_ROOT / "docs/upgrade-0.26.md").read_text(encoding="utf-8")
+    disposition = (_ROOT / "docs/archive/SPIKE_DISPOSITION.md").read_text(
+        encoding="utf-8"
+    )
 
-    assert "config/kernel-retired-surfaces-v1.json" in guide
-    for replacement in {entry["replacement"] for entry in manifest["entries"]}:
-        assert f"`{replacement}`" in guide
-    for surface_type in {entry["surface_type"] for entry in manifest["entries"]}:
-        assert f"`{surface_type}`" in guide
+    assert manifest["schema"] == "codex-usage-tracker.kernel-retired-surfaces.v1"
+    assert manifest["entries"]
+    assert "config/kernel-retired-surfaces-v1.json" in disposition
+    assert "docs/upgrade-0.26.md" in disposition

@@ -1,0 +1,1510 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://codex-usage-tracker.invalid/schemas/lifecycle-run-invocation-authority-v11.schema.json",
+  "title": "CK-07R1A0 finite lifecycle source/runtime authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "authority_version",
+    "owner",
+    "authority_base_sha",
+    "status",
+    "shared_preparation_binding",
+    "historical_d192",
+    "argv_correction",
+    "first_failure",
+    "change_control",
+    "lifecycle_state_machine",
+    "selected_candidate",
+    "preserved_authorities",
+    "launch_contract",
+    "launch_gates",
+    "run_token",
+    "failure_matrix",
+    "preserved_history",
+    "feasibility",
+    "scope",
+    "previous_r3a_shared_preparation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "codex-usage-tracker.lifecycle-run-invocation-authority.v11"
+    },
+    "authority_version": {
+      "const": 11
+    },
+    "owner": {
+      "const": "CK-07R1A0"
+    },
+    "authority_base_sha": {
+      "const": "6c08ecd92a2c5166c1585be426e1ed437309a910"
+    },
+    "status": {
+      "const": "blocked_no_run"
+    },
+    "shared_preparation_binding": {
+      "const": {
+        "authority_main_sha256": "7d1831ff5229e8e2a9819f0bd155d116ad97c3c3579bfa0444f791fe81e81feb",
+        "r3a_atomic_cohort_sha256": "6689d61fbf6d7948e1958a9d0bc58b4ea326a7f04221914b74c0651e0be1e37c",
+        "historical_d192_sha256": "d192c858b48e44b5aa7a7e39ef524e5ec2f08085655fe485639f5e875a727aa1",
+        "r3a_requires_complete_cohort": true,
+        "direct_ck07_use_of_r3a_preparation": "forbidden",
+        "direct_use_of_d192": "forbidden",
+        "mixed_state": "fail_closed",
+        "runtime_acceptance": "not_claimed",
+        "launch_authorized": false
+      }
+    },
+    "historical_d192": {
+      "const": {
+        "sha256": "d192c858b48e44b5aa7a7e39ef524e5ec2f08085655fe485639f5e875a727aa1",
+        "status": "revoked_for_new_base",
+        "direct_use": "forbidden",
+        "reason": "historical CK-07 candidate is not directly applicable after the R3A preparation transition"
+      }
+    },
+    "argv_correction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "old_guard",
+        "old_guard_effect",
+        "corrected_guard",
+        "corrected_candidate_status",
+        "corrected_candidate_artifacts",
+        "old_candidate_artifacts",
+        "non_launching_subprocess_test",
+        "old_candidate_invocation"
+      ],
+      "properties": {
+        "old_guard": {
+          "const": "sys.argv[1:] == LAUNCH_COMMAND[1:]"
+        },
+        "old_guard_effect": {
+          "const": "the frozen shell command is rejected because flags-only argv is compared with script path plus flags"
+        },
+        "corrected_guard": {
+          "const": "(sys.argv[0], *sys.argv[1:]) == LAUNCH_COMMAND[1:]"
+        },
+        "corrected_candidate_status": {
+          "const": "frozen_not_run"
+        },
+        "corrected_candidate_artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "benchmark_sha256",
+            "lifecycle_test_sha256"
+          ],
+          "properties": {
+            "benchmark_sha256": {
+              "const": "f108dbb45d7586a15eb370c94fc124268a249f2f6f1ee97e7b8b28a3874b737c"
+            },
+            "lifecycle_test_sha256": {
+              "const": "4c51488988397e0ccaf40266a4f68bb1d6d342e4be1db36dd1cf36ab63aa335a"
+            }
+          }
+        },
+        "old_candidate_artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "benchmark_sha256",
+            "lifecycle_test_sha256",
+            "status",
+            "reuse"
+          ],
+          "properties": {
+            "benchmark_sha256": {
+              "const": "6a864c74a403da3edb671d9750fc2b2a59b73899102075ee0cec89fbb429b783"
+            },
+            "lifecycle_test_sha256": {
+              "const": "a033e1c31f30784e321fdfe6dcce75460f89a02bc29beecfa40475f604deffac"
+            },
+            "status": {
+              "const": "historical_rejected_not_authoritative"
+            },
+            "reuse": {
+              "const": "forbidden"
+            }
+          }
+        },
+        "non_launching_subprocess_test": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "test_path",
+            "contract",
+            "launch_side_effect"
+          ],
+          "properties": {
+            "required": {
+              "const": true
+            },
+            "test_path": {
+              "const": "tests/kernel/test_lifecycle_run_invocation_authority.py"
+            },
+            "contract": {
+              "const": "run a real subprocess with the exact script path and flags, exercise the corrected guard, suppress the launcher, and assert success with no child launch"
+            },
+            "launch_side_effect": {
+              "const": "none"
+            }
+          }
+        },
+        "old_candidate_invocation": {
+          "const": "forbidden"
+        }
+      }
+    },
+    "first_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "status",
+        "attempted_once",
+        "command",
+        "guard_phase",
+        "comparison",
+        "exit_code",
+        "elapsed_seconds",
+        "evidence",
+        "retry",
+        "restart",
+        "replacement",
+        "preservation"
+      ],
+      "properties": {
+        "classification": {
+          "const": "pre_child_argv_guard_failure"
+        },
+        "status": {
+          "const": "historical_terminal_attempt_of_rejected_old_candidate"
+        },
+        "attempted_once": {
+          "const": true
+        },
+        "command": {
+          "const": [
+            ".venv/bin/python",
+            "scripts/benchmark_ck07r1_lifecycle_scale.py",
+            "--profile",
+            "all",
+            "--samples",
+            "5",
+            "--output",
+            "output/ck07r1/lifecycle-requalification-v1.json"
+          ]
+        },
+        "guard_phase": {
+          "const": "raw_argv_guard_before_launch_exact"
+        },
+        "comparison": {
+          "const": "sys.argv[1:] compared to LAUNCH_COMMAND[1:]"
+        },
+        "exit_code": {
+          "const": 2
+        },
+        "elapsed_seconds": {
+          "const": 0.075241709
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "child",
+            "pid",
+            "handshake",
+            "token",
+            "output",
+            "ledger",
+            "stdout",
+            "stderr",
+            "receipt",
+            "runtime"
+          ],
+          "properties": {
+            "child": {
+              "const": "absent"
+            },
+            "pid": {
+              "const": "absent"
+            },
+            "handshake": {
+              "const": "absent"
+            },
+            "token": {
+              "const": "absent_and_unconsumed"
+            },
+            "output": {
+              "const": "absent"
+            },
+            "ledger": {
+              "const": "absent"
+            },
+            "stdout": {
+              "const": "absent"
+            },
+            "stderr": {
+              "const": "absent"
+            },
+            "receipt": {
+              "const": "absent"
+            },
+            "runtime": {
+              "const": "absent"
+            }
+          }
+        },
+        "retry": {
+          "const": "none"
+        },
+        "restart": {
+          "const": "none"
+        },
+        "replacement": {
+          "const": "none"
+        },
+        "preservation": {
+          "const": "retain exactly as historical evidence; do not upgrade, retry, restart, replace, or reinterpret as a successful process launch"
+        }
+      }
+    },
+    "change_control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exactly_one_pr",
+        "hosted_ci_required",
+        "merge_policy",
+        "exact_main_verification",
+        "merged_sha",
+        "downstream"
+      ],
+      "properties": {
+        "exactly_one_pr": {
+          "const": true
+        },
+        "hosted_ci_required": {
+          "const": true
+        },
+        "merge_policy": {
+          "const": "squash merge only when all required hosted CI jobs pass"
+        },
+        "exact_main_verification": {
+          "const": "attach verification against the exact merged main contents before acceptance"
+        },
+        "merged_sha": {
+          "const": null
+        },
+        "downstream": {
+          "const": "blocked_until_authority_merge_and_exact_main_verification"
+        }
+      }
+    },
+    "lifecycle_state_machine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_state",
+        "states",
+        "transitions",
+        "dynamic_receipt_identity",
+        "forbidden_transitions"
+      ],
+      "properties": {
+        "current_state": {
+          "const": "authority_main"
+        },
+        "states": {
+          "const": [
+            {
+              "name": "authority_main",
+              "source_sha256": "7d1831ff5229e8e2a9819f0bd155d116ad97c3c3579bfa0444f791fe81e81feb",
+              "source_role": "accepted_current_r1b_predecessor",
+              "runtime_acceptance": "not_claimed",
+              "receipt_policy": "receipt_absent_and_non_qualifying",
+              "evidence_identity_policy": "not_available",
+              "merge_policy": "current_authority_state"
+            },
+            {
+              "name": "worker_prequalification",
+              "source_sha256": "66c015de949a6c380bd49964cb6c48c30dee64ecb14074b480837c44024328ea",
+              "source_role": "selected_ck07_exact_candidate",
+              "runtime_acceptance": "not_claimed",
+              "receipt_policy": "not_yet_available",
+              "evidence_identity_policy": "not_available",
+              "merge_policy": "authority_merge_and_exact_main_required_before_entry"
+            },
+            {
+              "name": "post_single_run",
+              "source_sha256": "66c015de949a6c380bd49964cb6c48c30dee64ecb14074b480837c44024328ea",
+              "source_role": "selected_ck07_exact_candidate",
+              "runtime_acceptance": "qualified_only_with_complete_planner_valid_receipt",
+              "receipt_policy": "complete_planner_valid_receipt_required",
+              "evidence_identity_policy": "bind_exact_dynamic_receipt_and_evidence_identity",
+              "merge_policy": "worker_merge_and_exact_main_required_for_final_acceptance"
+            },
+            {
+              "name": "final_accepted",
+              "source_sha256": "66c015de949a6c380bd49964cb6c48c30dee64ecb14074b480837c44024328ea",
+              "source_role": "selected_ck07_exact_candidate",
+              "runtime_acceptance": "accepted_only_with_worker_merge_and_exact_main",
+              "receipt_policy": "same_complete_planner_valid_receipt_identity_required",
+              "evidence_identity_policy": "same_exact_dynamic_receipt_and_evidence_identity",
+              "merge_policy": "worker_pr_squash_merge_and_exact_main_verification_required"
+            }
+          ]
+        },
+        "transitions": {
+          "const": [
+            {
+              "from": "authority_main",
+              "to": "worker_prequalification",
+              "requires": [
+                "this authority is merged and exact-main verified",
+                "the existing worker resumes only the preserved exact candidate worktree",
+                "the worker presents the byte-exact 66c015de/f108dbb4/4c514889 cohort over the 7d1831ff predecessor",
+                "runtime_acceptance remains not_claimed",
+                "authority-integrity and prelaunch gates pass",
+                "maximum_new_end_to_end_runs remains 1 and unspent_unavailable",
+                "the first successful child launch is exactly one new qualification launch, not a retry, restart, or replacement of a launched process",
+                "no old-candidate invocation may recur"
+              ]
+            },
+            {
+              "from": "worker_prequalification",
+              "to": "post_single_run",
+              "requires": [
+                "only the exact corrected selected successor cohort is present",
+                "exact prelaunch gates pass and one child launch consumes the run token",
+                "a complete planner-valid receipt is produced",
+                "receipt schema, static identities, workload_transition_digest, and stdout/stderr/output evidence identities validate",
+                "no retry, restart, or replacement occurs and no old-candidate invocation recurs"
+              ]
+            },
+            {
+              "from": "post_single_run",
+              "to": "final_accepted",
+              "requires": [
+                "the worker PR is squash-merged",
+                "exact-main verification matches the merged worker contents",
+                "the same complete receipt and evidence identity remains bound"
+              ]
+            }
+          ]
+        },
+        "dynamic_receipt_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_fields",
+            "identity_paths",
+            "ledger_path",
+            "source",
+            "binding",
+            "mismatch"
+          ],
+          "properties": {
+            "required_fields": {
+              "const": [
+                "run_token_id",
+                "receipt_schema",
+                "workload_transition_digest",
+                "publication_digest",
+                "ledger_file_sha256",
+                "stdout_sha256",
+                "stderr_sha256",
+                "output_sha256",
+                "launch_pid",
+                "launch_cwd",
+                "launch_argv"
+              ]
+            },
+            "identity_paths": {
+              "const": {
+                "run_token_id": "ledger.run_token_id",
+                "receipt_schema": "ledger.receipt.schema",
+                "workload_transition_digest": "ledger.receipt.workload_transition_digest",
+                "publication_digest": "ledger.receipt.publication_digest",
+                "ledger_file_sha256": "sha256(exact ledger file bytes at output/ck07r1/lifecycle-requalification-v1.launch-token.json)",
+                "stdout_sha256": "ledger.evidence.stdout_sha256",
+                "stderr_sha256": "ledger.evidence.stderr_sha256",
+                "output_sha256": "ledger.evidence.output_sha256",
+                "launch_pid": "ledger.process.pid",
+                "launch_cwd": "ledger.process.cwd",
+                "launch_argv": "ledger.process.argv"
+              }
+            },
+            "ledger_path": {
+              "const": "output/ck07r1/lifecycle-requalification-v1.launch-token.json"
+            },
+            "source": {
+              "const": "the frozen launch ledger plus exact stdout, stderr, and output evidence; ledger_file_sha256 is computed from the final ledger bytes"
+            },
+            "binding": {
+              "const": "post_single_run is unavailable until every required field is present and validated"
+            },
+            "mismatch": {
+              "const": "fail_closed"
+            }
+          }
+        },
+        "forbidden_transitions": {
+          "const": [
+            "authority_main->post_single_run",
+            "authority_main->final_accepted",
+            "worker_prequalification->final_accepted",
+            "any state with an unbound or incomplete receipt->post_single_run",
+            "any state without worker PR merge and exact-main verification->final_accepted"
+          ]
+        }
+      }
+    },
+    "selected_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "base_sha",
+        "retained_branch",
+        "retained_worktree",
+        "witness_status",
+        "source_predecessor_sha256",
+        "source_successor_sha256",
+        "runtime_acceptance",
+        "requires_complete_candidate_cohort",
+        "direct_ck07_use",
+        "launch_authorized",
+        "artifacts",
+        "binding",
+        "worker_revalidation_required"
+      ],
+      "properties": {
+        "status": {
+          "const": "exact_ck07_successor_permitted_not_accepted"
+        },
+        "base_sha": {
+          "const": "6c08ecd92a2c5166c1585be426e1ed437309a910"
+        },
+        "retained_branch": {
+          "const": "feature/ck-07r1-launcher-correction-v10"
+        },
+        "retained_worktree": {
+          "const": "2026-08-11/codex-usage-tracker-ck07r1-launcher-correction-v10"
+        },
+        "witness_status": {
+          "const": "retained_uncommitted_read_only_exact_candidate"
+        },
+        "source_predecessor_sha256": {
+          "const": "7d1831ff5229e8e2a9819f0bd155d116ad97c3c3579bfa0444f791fe81e81feb"
+        },
+        "source_successor_sha256": {
+          "const": "66c015de949a6c380bd49964cb6c48c30dee64ecb14074b480837c44024328ea"
+        },
+        "runtime_acceptance": {
+          "const": "not_claimed"
+        },
+        "requires_complete_candidate_cohort": {
+          "const": true
+        },
+        "direct_ck07_use": {
+          "const": "worker_prequalification_only_after_authority_exact_main"
+        },
+        "launch_authorized": {
+          "const": false
+        },
+        "artifacts": {
+          "const": [
+            {
+              "path": "src/codex_usage_tracker/agent_kernel/publication/preparation.py",
+              "sha256": "66c015de949a6c380bd49964cb6c48c30dee64ecb14074b480837c44024328ea",
+              "role": "source"
+            },
+            {
+              "path": "scripts/benchmark_ck07r1_lifecycle_scale.py",
+              "sha256": "f108dbb45d7586a15eb370c94fc124268a249f2f6f1ee97e7b8b28a3874b737c",
+              "role": "benchmark"
+            },
+            {
+              "path": "tests/agent_kernel/publication/test_lifecycle_scale.py",
+              "sha256": "4c51488988397e0ccaf40266a4f68bb1d6d342e4be1db36dd1cf36ab63aa335a",
+              "role": "lifecycle_test"
+            },
+            {
+              "path": "docs/decisions/evidence/ck07/publication-refresh-recovery-evidence.json",
+              "sha256": "36eb76ca286b3448037857b701caab9371afc704a22bc479523149e70aca41eb",
+              "role": "linked_evidence"
+            }
+          ]
+        },
+        "binding": {
+          "const": "only the byte-exact 66c015de/f108dbb4/4c514889 cohort may enter worker_prequalification after this authority merges and exact-main verifies"
+        },
+        "worker_revalidation_required": {
+          "const": true
+        }
+      }
+    },
+    "preserved_authorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lifecycle_path",
+        "lifecycle_source_digest"
+      ],
+      "properties": {
+        "lifecycle_path": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256",
+            "schema_path",
+            "schema_sha256"
+          ],
+          "properties": {
+            "path": {
+              "const": "docs/decisions/evidence/ck07r1a0/lifecycle-path-authority.json"
+            },
+            "sha256": {
+              "const": "315f143661efa89f572484a7fc1e17754be5537c143fa2be1d97a041ad7b44b1"
+            },
+            "schema_path": {
+              "const": "docs/decisions/evidence/ck07r1a0/lifecycle-path-authority.schema.json"
+            },
+            "schema_sha256": {
+              "const": "181fa2290457e1149764b5f5952559838e70d4f81a512bc920aeb52592fc7856"
+            }
+          }
+        },
+        "lifecycle_source_digest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256",
+            "schema_path",
+            "schema_sha256"
+          ],
+          "properties": {
+            "path": {
+              "const": "docs/decisions/evidence/ck07r1a0/lifecycle-source-digest-authority.json"
+            },
+            "sha256": {
+              "const": "7cc998fb29cad3a7b87e95026df5fb2195684c064628885cab7cc0a781d0bb74"
+            },
+            "schema_path": {
+              "const": "docs/decisions/evidence/ck07r1a0/lifecycle-source-digest-authority.schema.json"
+            },
+            "schema_sha256": {
+              "const": "6bf00ce49082be581783c33ce7247a29eb9b63515d6a5af209dccd82d28d685b"
+            }
+          }
+        }
+      }
+    },
+    "launch_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregate_timeout",
+        "launcher_safety",
+        "repository_relative_command",
+        "required_cwd",
+        "cwd_rule",
+        "interpreter",
+        "environment",
+        "output",
+        "fixture_identity",
+        "profiles",
+        "tail_limits",
+        "reachable_path"
+      ],
+      "properties": {
+        "aggregate_timeout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "seconds",
+            "formula",
+            "production_sample_count",
+            "production_sample_budget_seconds",
+            "publication_recovery_overhead_seconds",
+            "scope",
+            "underlying_runtime_budgets_ms"
+          ],
+          "properties": {
+            "seconds": {
+              "const": 720
+            },
+            "formula": {
+              "const": "5 * 120 + 120"
+            },
+            "production_sample_count": {
+              "const": 5
+            },
+            "production_sample_budget_seconds": {
+              "const": 120
+            },
+            "publication_recovery_overhead_seconds": {
+              "const": 120
+            },
+            "scope": {
+              "const": "wrapper_only"
+            },
+            "underlying_runtime_budgets_ms": {
+              "const": {
+                "first_publication_30_day": 5000,
+                "production_all_time": 120000,
+                "no_change": 100,
+                "one_call_tail": 500,
+                "one_tool_tail": 500
+              }
+            }
+          }
+        },
+        "launcher_safety": {
+          "const": {
+            "overlay_and_cohort_verification": "must_complete_before_ledger_fork_child_release_or_token_consumption",
+            "receipt_binding": "must_equal_exact_overlay_verification_result_and_three_artifact_cohort",
+            "receipt_completion_ordering": "construct_exact_overlay_bound_receipt_then_validate_then_first_durable_completed_finalization",
+            "receipt_failure_state": "construction_validation_or_finalization_failure_is_failed_after_launch_never_completed",
+            "child_pre_release_failure": "every_pre_release_child_failure_routes_to_os._exit_71",
+            "child_wait_signal_handling": "SIGINT_SIGTERM_ignored_while_waiting_for_parent_release",
+            "parent_cleanup_pid_guard": "reject_pid_less_than_or_equal_to_zero_before_kill_wait_or_reap",
+            "atomic_ledger_update": "unique_same_directory_mkstemp_close_and_unlink_on_every_failed_or_interrupted_write_fsync_replace_or_post_replace_path",
+            "atomic_failure_state": "durable_failed_after_launch_token_consumed_no_retry_no_temp_residue",
+            "parent_signal_handling": "temporary_SIGINT_SIGTERM_handlers_installed_before_child_observation_held_through_bounded_reap_evidence_receipt_and_terminal_ledger_persistence_then_restored",
+            "wait_interruption_cleanup": "every_wait_exception_or_parent_signal_requires_bounded_SIGTERM_then_SIGKILL_then_reap_before_terminal_failure",
+            "signal_cleanup_mask": "SIGINT_SIGTERM_ignored_during_bounded_child_cleanup",
+            "terminal_fallback_signal_mask": "SIGINT_SIGTERM_ignored_during_every_terminal_fallback_persistence_then_prior_temporary_handlers_restored",
+            "evidence_completion_ordering": "required_non_null_stdout_stderr_output_read_hash_parse_validate_before_first_durable_completed_finalization",
+            "evidence_failure_state": "missing_read_hash_parse_validation_or_finalization_failure_is_failed_after_launch_never_completed",
+            "interpreter_identity": {
+              "executable": "lexical_repository_worktree_.venv/bin/python_required",
+              "sys_prefix": "lexical_repository_worktree_.venv_required",
+              "base_interpreter": "rejected",
+              "symlink_or_resolved_equivalence": "rejected",
+              "wrong_worktree_venv": "rejected",
+              "prefix_mismatch": "rejected"
+            },
+            "post_token_or_release_failure_state": "failed_after_launch",
+            "termination_sequence": [
+              "SIGTERM",
+              "wait_up_to_5_seconds",
+              "SIGKILL"
+            ],
+            "final_reap_timeout_seconds": 5,
+            "retry": "none",
+            "restart": "none",
+            "replacement": "none"
+          }
+        },
+        "repository_relative_command": {
+          "const": [
+            ".venv/bin/python",
+            "scripts/benchmark_ck07r1_lifecycle_scale.py",
+            "--profile",
+            "all",
+            "--samples",
+            "5",
+            "--output",
+            "output/ck07r1/lifecycle-requalification-v1.json"
+          ]
+        },
+        "required_cwd": {
+          "const": "repository_root"
+        },
+        "cwd_rule": {
+          "const": "pwd -P is the fresh retained worker worktree root containing pyproject.toml; do not run from scripts, a canonical dirty checkout, or a witness worktree"
+        },
+        "interpreter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "executable",
+            "version_min_inclusive",
+            "version_max_exclusive",
+            "resolution",
+            "system_fallback"
+          ],
+          "properties": {
+            "executable": {
+              "const": ".venv/bin/python"
+            },
+            "version_min_inclusive": {
+              "const": "3.10"
+            },
+            "version_max_exclusive": {
+              "const": "3.15"
+            },
+            "resolution": {
+              "const": "sys.executable resolves to the repository .venv/bin/python"
+            },
+            "system_fallback": {
+              "const": false
+            }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "forbidden",
+            "data_policy"
+          ],
+          "properties": {
+            "required": {
+              "const": {
+                "LC_ALL": "C.UTF-8",
+                "PYTHONHASHSEED": "0",
+                "PYTHONUNBUFFERED": "1",
+                "TZ": "UTC"
+              }
+            },
+            "forbidden": {
+              "const": [
+                "PYTHONPATH",
+                "CODEX_HOME",
+                "real Codex log or database paths"
+              ]
+            },
+            "data_policy": {
+              "const": "synthetic fixtures only; no private or production inputs"
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "relative_path",
+            "exclusive_paths",
+            "format",
+            "parent_rule",
+            "prelaunch_rule",
+            "overwrite_rule",
+            "write_rule"
+          ],
+          "properties": {
+            "relative_path": {
+              "const": "output/ck07r1/lifecycle-requalification-v1.json"
+            },
+            "exclusive_paths": {
+              "const": {
+                "output": "output/ck07r1/lifecycle-requalification-v1.json",
+                "ledger": "output/ck07r1/lifecycle-requalification-v1.launch-token.json",
+                "stdout": "output/ck07r1/lifecycle-requalification-v1.stdout.txt",
+                "stderr": "output/ck07r1/lifecycle-requalification-v1.stderr.txt"
+              }
+            },
+            "format": {
+              "const": "one canonical UTF-8 JSON document followed by LF"
+            },
+            "parent_rule": {
+              "const": "worker may create only the local ignored output/ck07r1 directory immediately before preflight"
+            },
+            "prelaunch_rule": {
+              "const": "all four exact output, ledger, stdout, and stderr paths must be absent before preflight and launch"
+            },
+            "overwrite_rule": {
+              "const": "if any of the four exact paths exists, fail closed before launch; never truncate, append, replace, or reuse any of them"
+            },
+            "write_rule": {
+              "const": "the child creates the output only for this launch and the authority records its final file SHA-256"
+            }
+          }
+        },
+        "fixture_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "vocabulary",
+            "rejected_dispatch_values",
+            "manifest",
+            "fixture_files",
+            "dynamic_digest"
+          ],
+          "properties": {
+            "vocabulary": {
+              "const": {
+                "fixture_manifest_digest": "the manifest's declared manifest_digest value; it is not a file SHA and is not a workload digest",
+                "fixture_file_sha256": "SHA-256 of exact fixture file bytes at the required relative path; it is not the manifest digest and is not a dynamic digest",
+                "workload_transition_digest": "SHA-256 computed during this run from the canonical generated workload and emitted transition vector; it is not supplied as a static fixture identity"
+              }
+            },
+            "rejected_dispatch_values": {
+              "const": [
+                {
+                  "value": "e8c79373697ebe2af5385dbb2899ae49cec61037c4a3b0909f91225128e0bc",
+                  "length": 62,
+                  "status": "revoked_never_authoritative",
+                  "use": "never_used",
+                  "reason": "malformed dispatch value; the canonical fixture file SHA-256 is 64 hexadecimal characters"
+                }
+              ]
+            },
+            "manifest": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "schema",
+                "fixture_manifest_digest",
+                "fixture_file_sha256",
+                "seed"
+              ],
+              "properties": {
+                "path": {
+                  "const": "tests/agent_kernel/fixtures/tiny-v1/manifest.json"
+                },
+                "schema": {
+                  "const": "codex-usage-tracker.synthetic-fixture-manifest.v1"
+                },
+                "fixture_manifest_digest": {
+                  "const": "91e0658f913c917bd8ce69fac9a1d75e881f41630eccc0f30f68bd9b6a972a35"
+                },
+                "fixture_file_sha256": {
+                  "const": "e8c79373697ebe2af5385dbb2899ae49cec6104637c4a3b0909f91225128e0bc"
+                },
+                "seed": {
+                  "const": 20260728
+                }
+              }
+            },
+            "fixture_files": {
+              "const": [
+                {
+                  "path": "tests/agent_kernel/fixtures/profiles/standard-v1.json",
+                  "fixture_file_sha256": "ef0da880255a0b13ea6055e0f8d748870c075635aa6f199c9521462c681250f3"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/profiles/production-v1.json",
+                  "fixture_file_sha256": "2de0b4dc198603da6c1b0905b8d934e2cd5604e4036ef009d0cd07f1cc81f51b"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0000.jsonl",
+                  "fixture_file_sha256": "bad29500048dcff994d4211ff6de446c48d51184ab00caa134a7d668a6e57191"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0001.jsonl",
+                  "fixture_file_sha256": "d3ddb9592d67f058b7b7b354c7e01ff159d195c3963e0780be7a4cf35ec9a5eb"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0002.jsonl",
+                  "fixture_file_sha256": "114dadd49888fe77bfa1690b0fb810820950dea80d04ff11b233cd14bab54605"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0003.jsonl",
+                  "fixture_file_sha256": "12ccb3114f5f4583e98e6e0d8a485b2c1479762b93cd8e6008c9be14edfd2a5d"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0004.jsonl",
+                  "fixture_file_sha256": "0729952c7d2c250608ac0913a9d4a879c09b3bf252d86ee84b6b333000b66514"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0005.jsonl",
+                  "fixture_file_sha256": "cbfdfbb7f0f463c087c058b0f49cfdb6ec0ff72da5afa14d293b06a3f2ee817f"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/active/source-0006.jsonl",
+                  "fixture_file_sha256": "f7693618223a2de73d5dcfc0c645f13455c480a721641b4d790c278744283729"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/archived/exact-copy.jsonl",
+                  "fixture_file_sha256": "34709a9e5b6c52438f7c5710c9480db9a2641fbd33e25d8e6c767c383502a65f"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/malformed/malformed.jsonl",
+                  "fixture_file_sha256": "cdfbf46b0d9524c5c9b16b6672eb98cd9f1b413703cd75f8ca9b833e96e5ac4d"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/replaced/revision-1.jsonl",
+                  "fixture_file_sha256": "de66394d849cab6e4936af84b4991e36c1cdf6746f0ab90c7c39dd1ca10761e1"
+                },
+                {
+                  "path": "tests/agent_kernel/fixtures/tiny-v1/sources/truncated/truncated.jsonl",
+                  "fixture_file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                }
+              ]
+            },
+            "dynamic_digest": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field",
+                "algorithm",
+                "canonicalization",
+                "source",
+                "supplied_before_launch",
+                "recorded_after",
+                "verified_at",
+                "mismatch"
+              ],
+              "properties": {
+                "field": {
+                  "const": "workload_transition_digest"
+                },
+                "algorithm": {
+                  "const": "sha256"
+                },
+                "canonicalization": {
+                  "const": "sort_keys=true; separators=(',', ':'); ensure_ascii=true; UTF-8"
+                },
+                "source": {
+                  "const": "generated workload descriptor plus ordered lifecycle transition vector, excluding receipt metadata and expected-answer/grading fields"
+                },
+                "supplied_before_launch": {
+                  "const": false
+                },
+                "recorded_after": {
+                  "const": "successful process launch and workload/transition production"
+                },
+                "verified_at": {
+                  "const": "acceptance after receipt schema validation"
+                },
+                "mismatch": {
+                  "const": "fail_closed"
+                }
+              }
+            }
+          }
+        },
+        "profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sample_count",
+            "warmup_count",
+            "profiled",
+            "seed",
+            "workloads"
+          ],
+          "properties": {
+            "sample_count": {
+              "const": 5
+            },
+            "warmup_count": {
+              "const": 0
+            },
+            "profiled": {
+              "const": false
+            },
+            "seed": {
+              "const": 20260728
+            },
+            "workloads": {
+              "const": [
+                {
+                  "name": "standard_30_day",
+                  "source_profile": "standard",
+                  "history_preset": "30_days",
+                  "model_calls": 2740,
+                  "entities": 685,
+                  "observations": 1369,
+                  "seed": 20260728,
+                  "profile_file_sha256": "ef0da880255a0b13ea6055e0f8d748870c075635aa6f199c9521462c681250f3"
+                },
+                {
+                  "name": "production_all_time",
+                  "source_profile": "production",
+                  "history_preset": "all_time",
+                  "model_calls": 1316864,
+                  "entities": 329216,
+                  "observations": 658431,
+                  "seed": 20260728,
+                  "profile_file_sha256": "2de0b4dc198603da6c1b0905b8d934e2cd5604e4036ef009d0cd07f1cc81f51b"
+                },
+                {
+                  "name": "no_change",
+                  "source_profile": "synthetic_tail",
+                  "history_preset": "all_time",
+                  "model_calls": 0,
+                  "entities": 0,
+                  "observations": 0,
+                  "seed": 20260728,
+                  "profile_file_sha256": null
+                },
+                {
+                  "name": "one_call_tail",
+                  "source_profile": "synthetic_tail",
+                  "history_preset": "all_time",
+                  "model_calls": 0,
+                  "entities": 1,
+                  "observations": 1,
+                  "seed": 20260728,
+                  "profile_file_sha256": null
+                },
+                {
+                  "name": "one_tool_tail",
+                  "source_profile": "synthetic_tail",
+                  "history_preset": "all_time",
+                  "model_calls": 0,
+                  "entities": 1,
+                  "observations": 1,
+                  "seed": 20260728,
+                  "profile_file_sha256": null
+                }
+              ]
+            }
+          }
+        },
+        "tail_limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source_symbol",
+            "construction",
+            "values",
+            "verification"
+          ],
+          "properties": {
+            "source_symbol": {
+              "const": "codex_usage_tracker.agent_kernel.publication.planner.TailLimits"
+            },
+            "construction": {
+              "const": "TailLimits() with no overrides"
+            },
+            "values": {
+              "const": {
+                "selected_bytes": 8388608,
+                "selected_records": 32,
+                "observations": 12000,
+                "occurrences": 12000,
+                "affected_sessions": 2000,
+                "affected_turns": 4000,
+                "affected_resources": 4000,
+                "affected_allowance_cycles": 512,
+                "dirty_keys": 16000,
+                "projection_rows": 16000,
+                "expected_wal_bytes": 16777216,
+                "planning_staleness_us": 5000000,
+                "model_call_tail_rows": 32000
+              }
+            },
+            "verification": {
+              "const": "receipt planner_tail_limits equals these values and plan_refresh receives the same values"
+            }
+          }
+        },
+        "reachable_path": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ordered_steps",
+            "selection",
+            "unchanged_plan",
+            "identity_binding",
+            "failure"
+          ],
+          "properties": {
+            "ordered_steps": {
+              "const": [
+                "select_readable_artifact(pointer_path, validate_open=...)",
+                "recover_startup(pointer_path, selection=..., store=..., ...)",
+                "plan_refresh(changes, intent, limits=TailLimits(), dirty_keys=0, projection_rows=0, expected_wal_bytes=None)",
+                "selected_plan_unchanged",
+                "PublicationWriter.publish_with_pointer(plan, request, write_set, pointer_path=..., operational_store=..., pointer_request=..., validate_open=...)",
+                "publish_small_with_pointer(..., commit_analytical=...)",
+                "PublicationWriter.publish(plan, request, write_set)"
+              ]
+            },
+            "selection": {
+              "const": "plan_refresh alone selects append_safe_small; no manually constructed PublicationPlan or operation-class override"
+            },
+            "unchanged_plan": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "identity",
+                "record",
+                "verify"
+              ],
+              "properties": {
+                "identity": {
+                  "const": "the exact object returned by plan_refresh is passed to the writer"
+                },
+                "record": {
+                  "const": [
+                    "planner_operation_class",
+                    "planner_reason",
+                    "planner_tail_limits",
+                    "planner_change_estimate",
+                    "plan_digest_before_writer",
+                    "plan_digest_at_writer"
+                  ]
+                },
+                "verify": {
+                  "const": "plan_digest_before_writer equals plan_digest_at_writer and all serialized plan fields remain unchanged"
+                }
+              }
+            },
+            "identity_binding": {
+              "const": [
+                "ReadSelection.head.publication_id == RefreshIntent.parent_publication_id",
+                "RefreshIntent.parent_publication_id == PublicationPlan.parent_publication_id",
+                "PublicationPlan.parent_publication_id == SmallPublicationRequest.expected_active_publication_id",
+                "SmallPublicationRequest.expected_active_publication_id == pre_commit_pointer.active.publication_id",
+                "committed_AnalyticalHead.parent_publication_id == SmallPublicationRequest.expected_active_publication_id",
+                "post_commit_pointer.active.publication_id == committed_AnalyticalHead.publication_id"
+              ]
+            },
+            "failure": {
+              "const": "any path, ordering, plan identity, or publication identity mismatch is fail_closed with no stitched artifacts"
+            }
+          }
+        }
+      }
+    },
+    "launch_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prelaunch",
+        "successful_process_launch",
+        "runtime_and_completion"
+      ],
+      "properties": {
+        "prelaunch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required",
+            "token"
+          ],
+          "properties": {
+            "required": {
+              "const": [
+                "exact command, cwd, interpreter, environment, output path, fixture manifest digest, and fixture file SHA values supplied",
+                "worker may create only the local ignored output/ck07r1 directory immediately before preflight",
+                "all four exact output, ledger, stdout, and stderr paths are absent and non-overwriting",
+                "no matching process exists for exact argv, exact cwd, and current owner",
+                "disk available bytes are captured",
+                "maximum_new_end_to_end_runs remains 1 and run token is unspent_unavailable",
+                "no old-candidate invocation may recur"
+              ]
+            },
+            "token": {
+              "const": "not consumed"
+            }
+          }
+        },
+        "successful_process_launch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "definition",
+            "record",
+            "token"
+          ],
+          "properties": {
+            "definition": {
+              "const": "child creation returns a PID and the child is observed with the exact command and required cwd"
+            },
+            "record": {
+              "const": [
+                "pid",
+                "parent_pid",
+                "launched_at_utc",
+                "launched_monotonic_ns",
+                "argv",
+                "cwd",
+                "interpreter",
+                "run_token_id"
+              ]
+            },
+            "token": {
+              "const": "consume exactly one run token at this stage and only at this stage"
+            }
+          }
+        },
+        "runtime_and_completion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "record",
+            "verification"
+          ],
+          "properties": {
+            "record": {
+              "const": [
+                "start and completion UTC timestamps",
+                "monotonic elapsed time",
+                "peak RSS bytes",
+                "disk available bytes before launch, after launch, and after completion",
+                "stdout and stderr evidence paths and SHA-256 values",
+                "output path and output file SHA-256",
+                "exit code or terminating signal",
+                "receipt schema and workload_transition_digest",
+                "planner path, selected-plan identity, publication/recovery identity bindings, budgets, counts, and postconditions",
+                "process state transitions and no-retry outcome"
+              ]
+            },
+            "verification": {
+              "const": "all required receipt fields, exact static identities, dynamic digest, planner path, budgets, counts, and postconditions are independently checked before acceptance"
+            }
+          }
+        }
+      }
+    },
+    "run_token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximum_new_end_to_end_runs",
+        "status",
+        "consumption",
+        "refund",
+        "prior_identities_reused",
+        "concurrent_processes_allowed",
+        "eligibility",
+        "first_successful_launch",
+        "old_candidate_reuse"
+      ],
+      "properties": {
+        "maximum_new_end_to_end_runs": {
+          "const": 1
+        },
+        "status": {
+          "const": "unspent_unavailable"
+        },
+        "consumption": {
+          "const": "successful_process_launch_only"
+        },
+        "refund": {
+          "const": false
+        },
+        "prior_identities_reused": {
+          "const": false
+        },
+        "concurrent_processes_allowed": {
+          "const": false
+        },
+        "eligibility": {
+          "const": "only after this authority merges and exact-main verifies, the stopped existing worker resumes only the preserved exact 66c015de/f108dbb4/4c514889 candidate cohort, and all gates pass"
+        },
+        "first_successful_launch": {
+          "const": "exactly one first successful child launch may consume the still-unspent token; this is not a retry, restart, or replacement of a launched process"
+        },
+        "old_candidate_reuse": {
+          "const": "forbidden"
+        }
+      }
+    },
+    "failure_matrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "after_launch",
+        "before_successful_launch"
+      ],
+      "properties": {
+        "after_launch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "no_retry",
+            "no_restart",
+            "no_replacement",
+            "retain_first_result",
+            "token_remains_consumed",
+            "failures"
+          ],
+          "properties": {
+            "no_retry": {
+              "const": true
+            },
+            "no_restart": {
+              "const": true
+            },
+            "no_replacement": {
+              "const": true
+            },
+            "retain_first_result": {
+              "const": true
+            },
+            "token_remains_consumed": {
+              "const": true
+            },
+            "failures": {
+              "const": [
+                "process launch failure after token consumption",
+                "interruption",
+                "timeout",
+                "nonzero exit or signal",
+                "incomplete receipt",
+                "invalid receipt",
+                "budget miss",
+                "planner or publication identity-binding miss",
+                "postcondition failure"
+              ]
+            }
+          }
+        },
+        "before_successful_launch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "token_consumed",
+            "automatic_retry_or_replacement",
+            "action"
+          ],
+          "properties": {
+            "token_consumed": {
+              "const": false
+            },
+            "automatic_retry_or_replacement": {
+              "const": false
+            },
+            "action": {
+              "const": "retain the exact blocker and keep the one-run gate unavailable"
+            }
+          }
+        }
+      }
+    },
+    "preserved_history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "writer_only_receipt_digest",
+        "source_predecessor_sha256",
+        "source_successor_sha256",
+        "runtime_budgets_ms",
+        "package_ceilings_bytes",
+        "pr_394",
+        "prior_attempt_ids",
+        "preservation"
+      ],
+      "properties": {
+        "writer_only_receipt_digest": {
+          "const": "935e4427b93e67c5ca649b773b0b3895dafac87f49bc76d7ed8917dff2f0250d"
+        },
+        "source_predecessor_sha256": {
+          "const": "408d18e44c87da234d220c29298ebac1780e9426e2dce767b0bfc3ae65e8a872"
+        },
+        "source_successor_sha256": {
+          "const": "d192c858b48e44b5aa7a7e39ef524e5ec2f08085655fe485639f5e875a727aa1"
+        },
+        "runtime_budgets_ms": {
+          "const": {
+            "first_publication_30_day": 5000,
+            "production_all_time": 120000,
+            "no_change": 100,
+            "one_call_tail": 500,
+            "one_tool_tail": 500
+          }
+        },
+        "package_ceilings_bytes": {
+          "const": {
+            "sdist": 2000000,
+            "wheel": 1000000
+          }
+        },
+        "pr_394": {
+          "const": {
+            "number": 394,
+            "head_sha": "98a9b5b82951d136644a5fe5f8a70d320131ba08",
+            "workflow_run_id": "30685780055",
+            "failed_job_id": "91331138768",
+            "failure": "ordinary.2000_call_tail",
+            "status": "stale_failed_superseded_read_only",
+            "policy": "do_not_update_rerun_merge_or_reinterpret"
+          }
+        },
+        "prior_attempt_ids": {
+          "const": [
+            "all-profile-initial-serializer",
+            "all-profile-corrected-serializer-tail-oracle",
+            "all-profile-pid-60367-recovery",
+            "production-only-valid-profile"
+          ]
+        },
+        "preservation": {
+          "const": "all prior run identities, attempts, timestamps, failures, receipts, and digests remain visible and read-only; no old receipt is upgraded"
+        }
+      }
+    },
+    "feasibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_script",
+        "candidate_status",
+        "exact_blocker",
+        "authority_action",
+        "run_action",
+        "fixture_identity_status"
+      ],
+      "properties": {
+        "candidate_script": {
+          "const": "scripts/benchmark_ck07r1_lifecycle_scale.py"
+        },
+        "candidate_status": {
+          "const": "exact_successor_bound_no_run_runtime_unqualified"
+        },
+        "exact_blocker": {
+          "const": "the exact successor cohort is authority-bound but this authority is not yet merged and exact-main verified, the stopped worker has not re-entered worker_prequalification, and no planner-valid receipt exists; the sole end-to-end gate remains unconsumed"
+        },
+        "authority_action": {
+          "const": "freeze contract only; do not implement runtime or harness behavior in this authority"
+        },
+        "run_action": {
+          "const": "do not execute production or end-to-end qualification; do not consume the run token; keep CK-07R1 blocked"
+        },
+        "fixture_identity_status": {
+          "const": "proven_for_static_manifest_and_file_values; workload_transition_digest remains a required runtime-produced value"
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_only_files",
+        "forbidden"
+      ],
+      "properties": {
+        "authority_only_files": {
+          "const": [
+            "AGENTS.md",
+            "docs/INDEX.md",
+            "docs/decisions/evidence/ck07r1a0/lifecycle-run-invocation-authority.json",
+            "docs/decisions/evidence/ck07r1a0/lifecycle-run-invocation-authority.schema.json",
+            "docs/decisions/evidence/ck07r1a0/lifecycle-source-digest-authority.json",
+            "docs/decisions/evidence/ck07r1a0/lifecycle-source-digest-authority.schema.json",
+            "docs/roadmap/REMAINING_EXECUTION_PLAN.md",
+            "docs/roadmap/TASK_PACKETS.md",
+            "docs/roadmap/tasks/ck-07r1a0-freeze-lifecycle-path-authority.md",
+            "docs/roadmap/tasks/ck-07r1-correct-lifecycle-preparation-scale.md",
+            "scripts/check_kernel_scope.py",
+            "tests/kernel/test_documentation_authority.py",
+            "tests/kernel/test_lifecycle_run_invocation_authority.py"
+          ]
+        },
+        "forbidden": {
+          "const": [
+            "src/codex_usage_tracker/agent_kernel/",
+            "scripts/benchmark_ck07r1_lifecycle_scale.py",
+            "tests/agent_kernel/publication/test_lifecycle_scale.py",
+            "the two retained witness worktrees",
+            "PR #394",
+            "downstream packets"
+          ]
+        }
+      }
+    },
+    "previous_r3a_shared_preparation": {
+      "const": {
+        "sha256": "e204e0da8f6dce7b6c4cf7a981803d2d8c08b45cb3a2ca370fe1838fd6cf2174",
+        "status": "revoked_for_session_boundedness_requalification",
+        "direct_use": "forbidden"
+      }
+    }
+  }
+}

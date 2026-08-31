@@ -1,417 +1,389 @@
 # Codex Usage Tracker Instructions
 
-## Project Purpose
+## Product and authority
 
-This repository builds the lean local usage-data kernel. Version 0.27 is
-publishable only from merged `main` or its exact release tag through the
-protected build-once workflow.
+This repository is replacing the released 0.28 spike with a clean, local,
+Codex-first workflow-observability kernel. The kernel owns exact facts,
+identity, ordering, deduplication, calculations, freshness, coverage,
+allowance, valuation, bounded queries, and stable evidence. The consuming
+model owns interpretation, hypotheses, prioritization, caveats, and
+recommendations.
 
-## Tech Stack
+Start at `docs/INDEX.md`. The only implementation roadmap is
+`docs/roadmap/AGENT_FIRST_CLEAN_CUTOVER.md`; its checkbox ledger is
+`docs/roadmap/TASK_PACKETS.md`. The remaining dependency graph, delegation
+readiness, ownership locks, and allowed parallelism are controlled by
+`docs/roadmap/REMAINING_EXECUTION_PLAN.md`. Each delegable unit has one file
+under `docs/roadmap/tasks/`. Archived documents and historical release notes
+are evidence, not authority.
 
-- Python 3.10+
-- SQLite via the Python standard library
-- Pytest for tests
+CK-07C additionally owns
+`docs/architecture/PLAN_OPERAND_AND_FACT_CONTRACT.md` and the versioned
+`config/agent-kernel/plan-operand-contract-v1.json`. CK-07D merged the
+effective-dated rate-card valuation correction at `e49531b`. CK-07E is the
+admitted test-only prerequisite for independent structural and query-only
+database-v1 fact adapters. CK-07A consumed CK-07B through CK-07E and is
+complete with 80 / 80 structural-v2 variants requalified. CK-08 is complete on
+merge with all 21 plans and 42 variants qualified as fact-backed mechanism
+evidence. A downstream architecture audit found that the expected-answer lane
+shares production evaluation, runtime keyset pagination follows complete
+Python materialization, projection classification combines execution stages,
+and publication/evidence scale plus replacement maintainability need
+corrective proof. CK-08R0 froze `corrective-gates-v1`; CK-08R2 is complete and
+CK-09 remains blocked. CK-08R1A froze corrected answer meaning and recursive
+closure; R1C is accepted at exact main `fb0c578`, and R1B is accepted at exact
+main `9e9332b3`. Final R1 requalification passed hosted CI in PR #439,
+squash-merged, and was exact-main verified at `0832b854`. CK-07R1's separate
+post-terminal roadmap completion makes CK-08R4 the sole Ready packet while
+CK-08RG and CK-09 remain blocked.
+CK-QG1A removed the two R2 page-executor complexity findings without changing
+behavior or the frozen baseline and is accepted at exact main `30983d4`;
+QG1 PR #392 passed hosted CI, squash-merged, and was exact-main verified at
+`68050b93`. CK-07R1A corrected
+the exact hosted Python 3.14 lifecycle-tail blocker; the linked CK-07R1A0
+authorities, including argv correction, are merged through `479cbdb`.
+Coordinator disposition and clean exact-main reapplication from `6c08ecd9`
+derived the exact `66c015de…` / `f108dbb4…` / `4c514889…` candidate cohort.
+The versioned
+[`shared-successor-overlay-authority-v1`](docs/decisions/evidence/ck07r1a0/shared-successor-overlay-authority-v1.json)
+preserves accepted CK-08R1B, CK-08R1, and CK-QG1 bytes while admitting only
+that complete cohort as CK-07 `worker_prequalification`.
+The sole CK-07R1 v2 launch is terminal `failed_after_launch`; its token is
+consumed and non-refundable, no planner-valid receipt or output exists, and no
+retry, restart, replacement, or further invocation is permitted. PR #448
+merged the exact deterministic planner-selected small/large correction and
+immutable v1/v2 terminal evidence at exact main `1d0466b1`. The additive
+[`lifecycle-post-terminal-completion-authority-v1`](docs/decisions/evidence/ck07r1a0/lifecycle-post-terminal-completion-authority-v1.json)
+accepts that merged deterministic evidence only for CK-07R1 roadmap dependency
+completion. It permanently records `runtime_acceptance=not_claimed`,
+planner-valid receipt absent, `post_single_run` unavailable, and
+`final_accepted` unavailable. It neither reclassifies the failed run nor
+changes production semantics. CK-08R4 must independently measure current
+merged publication behavior and must not claim the missing CK-07R1 runtime
+acceptance. PR #394 remains stale failed read-only.
+Retained R3 evidence proved the EvidenceService outer query
+physically unbounded; CK-08R3A owns that isolated fix and R3 awaits its
+accepted, merged, exact-main-verified result.
 
-## Repo Layout
+Advance only child tasks marked Ready in
+`docs/roadmap/REMAINING_EXECUTION_PLAN.md`. Parent CK-09 through CK-16 packets
+are umbrellas and must never be delegated directly. Do not begin a dependent
+task before its prerequisites are merged and exact-main verified. Update the
+task status, master ledger, measurements, deviations, and residual risks in
+the same change that completes a task.
 
-- `src/codex_usage_tracker/kernel/` - the only active product implementation.
-- `src/codex_usage_tracker/release/` - retained exact-byte release primitives.
-- `tests/kernel/` - synthetic oracle and current phase contracts.
-- `tests/release/` - retained release/promotion safety contracts.
-- `config/kernel-code-disposition-v1.json` - frozen K1 path decisions and
-  progressive transplant states.
-- `config/kernel-retired-surfaces-v1.json` - exact 0.25 public-surface removal
-  inventory.
-- `scripts/check_kernel_scope.py` - active-tree and publication-ref guard.
-- `docs/kernel-development-scope.md` - search, provenance, and privacy boundary.
-- `.mcp.json` - the single retained kernel MCP server.
-- `.codex-plugin/plugin.json` - release plugin identity and bundle attestation.
+## Standing Repository Authorization
 
-## Setup
+No additional user approval is required for roadmap-authorized,
+repository-scoped actions when merged repository authority and the immediate
+preflight authorize the action. Agents should proceed end to end through
+fresh worktrees and branches, dependency or bootstrap work, source, test,
+documentation, schema, authority, and accounting edits, local validation,
+bounded reviewers, commits, branch pushes, ordinary GitHub pull-request
+creation or updates, hosted CI, squash merges, exact-main verification,
+machine-DAG transitions, and synthetic qualification runs and artifacts. This
+standing authorization includes a one-shot token-consuming synthetic run when
+the merged authority and immediate preflight authorize that exact run.
 
-```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]"
-just v
-```
+Continue from handoff to handoff without pausing merely for repeated approval.
+Use engineering discretion for bounded implementation, integration, and policy
+corrections, and carry them through the repository's normal authority-PR,
+review, CI, merge, and exact-main verification path.
 
-## Branch And PR Workflow
+Worker identity is a normative coordinator/orchestration binding enforced by
+Codex thread controls and exact repository evidence. The coordinator's use of
+the exact existing task is the authoritative worker-ownership proof. Do not
+claim cryptographic per-task authentication or require a trusted per-task
+credential that Codex Desktop does not provide; runtime self-assertion is not
+worker authentication, and repeated user approval is not required.
 
-This project is now a published PyPI package with user-facing docs, JSON/MCP contracts, a release workflow, and privacy guarantees. Treat `main` as always releasable.
+Standing authorization does not waive fail-closed gates, exact identities and
+scopes, synthetic-only and privacy restrictions, one-shot no-refund/no-retry
+semantics, review/CI/merge requirements, or cleanup safety. It does not
+authorize force-pushes, direct pushes to `main`, destructive cleanup or
+deletion, loss of dirty or uncommitted evidence, credentials or secrets, paid
+resources, package publishing or release tags, public-visibility changes
+outside ordinary GitHub pull requests, real or live Codex data, production
+operations, or bypassing repository failures. Those actions remain separately
+constrained.
 
-### Product Kernel Reset Execution
+## Cross-packet semantic continuity
 
-All post-0.25 product work must follow
-`docs/roadmap/product-kernel-reset.md`, its approved
-`docs/superpowers/specs/2026-07-26-product-kernel-reset-design.md`, and the
-code-quarantine amendment at
-`docs/superpowers/specs/2026-07-26-kernel-code-quarantine-design.md`.
-Use one focused
-`kernel/<task-id>-<slug>` branch per task, implement only the task's declared
-contract, and update `docs/roadmap/product-kernel-reset-execution.md` in the
-same changeset with branch, commits, verification, measurements, deviations,
-review metrics, and residual risk.
+A packet is connected to its prerequisites by executable semantics, not only
+by document links, identifiers, hashes, counts, or a prior `Completed` status.
+Before a packet may consume an upstream artifact as truth, its contract must
+name:
 
-K1 starts from current `main` and freezes both the public-surface inventory and
-the full tracked-tree code-disposition manifest. Its resolver input is exactly
-`git ls-files` at the K1 commit; workflows, root metadata, configuration, and
-agent instructions are not exempt. After K1, create a detached,
-policy-read-only v0.25.1 reference worktree and the temporary,
-non-publishable `kernel/0.26-integration` branch. K1A–K9 used short-lived task
-branches based on, and merged back into, that integration branch. K10 creates
-`release/0.26.0` from the audited current-`main` SHA, incorporates the qualified
-integration head once, and opens `release/0.26.0` to `main`. The release branch
-remains blocked from publication; only merged `main` or its exact tag may enter
-the protected flow.
+- the producer artifact and exact identity;
+- the consumer path that uses it;
+- an independent truth source or reference evaluator;
+- the executable seam check that compares producer meaning with consumer
+  behavior;
+- the downstream packets and evidence that require requalification if the seam
+  changes.
 
-Before each K1A–K9 task and K10, audit tracked-path deltas from the frozen K1
-main SHA. An unrepresented path fails closed. Port required blocker behavior on
-`kernel/k<owner>-mainline-port-<issue>`, based on and targeting integration,
-with manifest, oracle, ledger, and affected phase-gate updates. Never merge the
-legacy main line into integration. If `main` moves after the K10 audit, restart
-the cutover audit rather than resolving an unclassified delta.
+For fact-backed behavior, preserve a three-way proof: one scenario declaration
+emits canonical typed facts, an independent reference evaluator calculates the
+expected result for the exact typed request, and the production consumer
+calculates the same result from its permitted facts. A database table
+containing expected answers, a copied oracle row, internal formula
+consistency, or a matching digest does not prove fact lineage.
 
-After K1A, activate only the integration worktree in Serena, GitNexus, and
-ordinary agent search. Read retired or transplant source from the v0.25.1 tag
-only through a bounded path named in `config/kernel-code-disposition-v1.json`;
-do not add the reference worktree to the normal project scope. Never delete an
-old worktree or branch without explicit maintainer permission.
+When a downstream packet exposes an upstream semantic mismatch, stop the
+affected packet, record exact reproduction evidence, and add a corrective
+packet to the dependency graph. Preserve historical packet evidence; amend it
+through a linked requalification record rather than silently changing its
+meaning. Do not resume dependents until the corrective packet replays every
+affected seam against the actual downstream implementation.
 
-The branch/ref publication guard must reject integration and every K1A–K9 task
-ref. K9 may remove disposable skeleton metadata but not that guard. Only K10
-sets the final version on `release/0.26.0`; publication still occurs only from
-merged `main` through the protected release workflow.
+## Packet task handoff
 
-The tracker owns exact facts, deterministic calculations, freshness, and
-evidence. The consuming model owns inference, explanation, and recommendations.
-Do not add server-authored narrative analysis, another MCP tool, a default fact
-table, a compatibility profile, default content indexing, or an overlay unless
-the active roadmap names it or an approved design amendment authorizes it.
-Removal and cutover behavior must be recorded in the active roadmap and
-execution ledger.
+Operate in convergence mode: one durable coordinator, one existing user-owned
+task per active child packet, and at most one shared-authority task. A new
+user-owned task is justified only for a newly Ready distinct packet, a
+genuinely independent parallel lane, or a new policy/contract decision that
+cannot be resolved inside the active packet's accepted authority. Reuse the
+existing packet task for ordinary implementation defects, tests, environment
+setup, validation corrections, review findings, and exact-main reapplication.
+Do not split freezing and implementation mechanically.
 
-The former MCP-first roadmap is archived historical evidence. Its stable
-redirects do not authorize new `pivot/` work.
+Follow the machine DAG in `docs/roadmap/REMAINING_EXECUTION_PLAN.md`. After
+acceptance, merge, and exact-main verification, the coordinator reconciles the
+packet/DAG/ledger and creates only uncreated newly Ready distinct packets.
+Fan out only disjoint work, hold joins, and deduplicate packet/frontier.
+Blocked, gated, incident-pending, or unverified work creates no successor.
 
-### Engineering Working Style
+Use bounded subagents inside an active task for focused read-only research,
+tests, or one independent review when they materially help. Keep durable
+cross-task ownership with the coordinator. Sol at medium reasoning is the
+default coordinator profile for collision handling and readiness judgment;
+bounded deterministic workers should normally use the less costly Luna profile
+at max reasoning, escalating only when ambiguity requires it.
 
-Start each change from an observable contract: name the behavior, add or select
-the focused test that proves it, implement the smallest complete change, and
-then run broader validation in proportion to risk.
+Use `<role> <short-scope>` task names. Every delegation names its parent thread
+ID. As its final action on completion, blocking, or fail-closed stop, the task
+must proactively message the parent with outcome, exact base/head and
+worktree, changed scope, validation, PR/merge/exact-main state, blockers, and
+the next authorized action. The parent treats that handoff as a continuation
+trigger; it does not create polling or wait-only tasks.
 
-- Organize modules around one stable responsibility and a clear dependency
-  direction. Split code when ownership or testability becomes clearer, and keep
-  cohesive behavior together when an extraction would only add forwarding
-  layers.
-- Judge module boundaries by responsibility, dependency direction, complexity,
-  and testability. Do not split cohesive code solely to satisfy a line count.
-- Prefer direct functions, explicit data structures, and existing repository
-  patterns. Add an abstraction only when it removes current duplication,
-  isolates an external boundary, or gives a concrete test seam needed now.
-- Preserve working names and interfaces unless the task changes their contract.
-  When moving code, keep behavior changes separate from mechanical relocation
-  so reviewers can verify both.
-- Diagnose a failing check from its exact evidence before editing. Fix the
-  behavioral, type, privacy, security, dependency, packaging, or release defect
-  it identifies; if it identifies none, correct the check or policy rather than
-  reshaping unrelated code.
-- Write comparisons in the order that best communicates the domain contract.
-  For measured budgets, prefer `measured <= ceiling`; do not reorder a clear
-  assertion solely to satisfy a stylistic Yoda-condition preference.
-- Use one focused test loop while implementing. At the stable checkpoint, run
-  the smallest broad profile that covers every touched contract; reuse that
-  evidence instead of rerunning overlapping profiles.
-- For approved roadmap-scale work, declare the exact paths, contract, and
-  validation once in a change plan. Keep the implementation cohesive and the
-  commit focused even when the complete inventory or migration spans many
-  files.
-- Generate exhaustive inventories, fixtures, schemas, and migration ledgers
-  from deterministic scripts. Review their inputs, schema, counts, and semantic
-  summaries; do not hand-edit generated output.
-- Keep synthetic fixtures small but semantically complete. Include edge states,
-  expected failures, privacy assertions, and stable identifiers without copying
-  local usage content.
-- Treat Ruff, Pyright, Tach, tests, privacy checks, security checks, public
-  contract checks, deterministic asset checks, package checks, and release
-  readiness as correctness gates.
+Repository exact-main state and repository-relative artifact paths are the
+identity source of truth. The receiving task recomputes hashes from those paths
+before acting. Do not relay long hashes, commands, or fixture identities
+through multiple task prompts when they can be verified from committed
+manifests. Before a one-shot or irreversible operation, run a real
+non-consuming integration preflight through the exact entry point and process
+boundary, not only a stubbed or in-process proof.
 
-Wemake is retired from repository governance. Do not install, invoke, or add it
-to local or CI workflows without a new explicit maintainer decision.
+Classify blockers as implementation, authority, environment, or external. An
+implementation bug stays in the active packet task. Create a corrective
+authority task only when a genuinely new policy or contract decision is
+required. Once crash integrity is restored, leave recovery mode and return to
+this convergence topology.
 
-Use the repository-owned `just vp`, `just v`, and `just vc` recipes for broad
-local verification. They intentionally mirror maintained repository and GitHub
-checks without Agent Maintainer's generic style, file-length, change-budget,
-Markdown-code-formatting, or expanded test-typecheck profiles. Do not invoke
-`agent_maintainer verify` as a repository acceptance gate. Agent Maintainer
-remains available for doctor, guidance, change-plan, context, and host-side wait
-workflows.
+## Implementation boundary
+
+- Build the replacement under `src/codex_usage_tracker/agent_kernel/`.
+- The 0.28 spike under `src/codex_usage_tracker/kernel/` is a frozen executable
+  oracle until CK-14. Do not import it, open or migrate its database, or add new
+  MVP behavior to it.
+- The replacement database identity is
+  `codex-usage-tracker.agent-kernel.v1`; its canonical and operational files
+  are separate.
+- Do not add compatibility views, migration paths, server-authored narrative
+  findings, free-form SQL tools, or generic dashboard framework behavior.
+- The active frontend, Console routes, Node toolchain, and browser tests remain
+  only to keep 0.28 usable. Do not extend them. CK-14 removes them after CK-13
+  approves the qualified replacement.
+- Preserve exact-byte release primitives and useful synthetic oracles until
+  their owning packet ports or retires them.
+- CK-15 is optional and never blocks the MVP unless the maintainer explicitly
+  promotes it.
+
+## Domain rules
+
+- Store signed UTC microseconds as integers. Missing is `NULL`, never zero.
+- Keep uncached input, cached input, reasoning, and output tokens separate.
+- Separate transport tool name, semantic operation, target, invocation intent,
+  tool completion, and observed resource mutation.
+- Never attribute a state change solely to the immediately preceding call or
+  tool; cumulative preceding activity can contribute.
+- Preserve every exact allowance observation and its compatibility interval.
+- Keep facts canonical and projections current-only. Normal tails update dirty
+  keys; they do not copy a generation or rebuild the complete database.
+- Query never refreshes. Long work is host-waited; the model never polls.
+- Keep result envelopes compact, bounded, capability-aware, and suitable for a
+  less-capable model.
+- Do not encode qualitative conclusions such as waste, productivity, churn,
+  goodness, badness, or skill candidacy in schema fields.
+
+## Data handling
+
+- Use synthetic fixtures only in tests, benchmarks, screenshots, and committed
+  examples. Never inspect or commit a contributor's real Codex logs.
+- Do not commit prompts, responses, reasoning, command bodies, patches, tool
+  output bodies, credentials, secrets, private paths, or local databases.
+- The replacement does not promise sanitization, redaction, or secret
+  filtering. Local metadata returned by a query can still be sensitive; users
+  are responsible for reviewing anything they share.
+- Do not copy raw prompt, response, reasoning, command, patch, or tool-output
+  bodies into the replacement SQLite database. Extract only the structural
+  facts required by an accepted question contract.
+- Keep all services local-only. Do not add telemetry or transmit local usage
+  data.
+
+## Working method
+
+1. Read the current packet and only its controlling authority documents.
+2. Name the observable contract, upstream producer artifact, consumer path,
+   independent truth source, and executable seam check.
+3. Add or select the failing synthetic oracle.
+4. Implement the smallest complete change inside the packet's ownership.
+5. Run focused checks, then the smallest complete repository profile covering
+   every touched contract.
+6. Record correctness, latency, storage, response-byte, MCP-call, and model-token
+   measurements required by the packet.
+7. Stabilize the diff, then use at most one final read-only reviewer.
+
+Prefer direct functions, explicit data structures, cohesive modules, and clear
+dependency direction. Add abstraction only when it removes present
+duplication, isolates an external boundary, clarifies ownership, or creates a
+test seam required now. Keep mechanical moves separate from behavior changes.
+Fix the behavior a gate is meant to protect; if a gate proves no maintainability
+or correctness property, adjust the gate rather than churning unrelated code.
+
+Wemake is retired from repository governance. Do not install, run, or restore
+it locally or in CI without a new maintainer decision. Do not use
+`agent_maintainer verify` as an acceptance gate. Agent Maintainer remains
+available for doctor, context, change plans, guidance, and host-side waiting.
+
+## Execution delegation
+
+The maintainer authorizes execution subagents for this roadmap:
+
+- Before spawning a writing agent into a fresh or reused worktree, the root
+  integrator runs `python3 scripts/bootstrap_dev_environment.py` from that exact
+  root. The command repairs `.venv` from the repository `dev` extra, verifies
+  every active PEP 508 requirement, the exact editable worktree source, and the
+  declared Scalene pin. It installs integrity-locked GitNexus 1.6.9 under
+  `tools/gitnexus/node_modules/` and creates or refreshes that worktree's index.
+  It never installs a global or transient GitNexus CLI. It serializes GitNexus
+  analysis across worktrees; let the host wait for the command instead of
+  assigning model-driven polling.
+- On entry, the execution agent runs
+  `python3 scripts/bootstrap_dev_environment.py --check` once before tests,
+  profiling, or semantic work. The check verifies the GitNexus registry's
+  physical worktree, branch, commit, and bounded compare result against
+  `origin/main`; a merely "up-to-date" status is insufficient. If a later
+  branch transition makes GitNexus stale, rerun the bootstrap in that exact
+  worktree. Never install Scalene or another declared dev tool ad hoc with pip.
+  Generated `.venv/` and `.gitnexus/` state stays untracked.
+- Invoke Python profiling as
+  `PATH="$PWD/.venv/bin:$PATH" agent-perf run ...`; agent-perf resolves the
+  pinned `scalene` console entry point from `PATH`, not from the workload
+  interpreter argument. Keep Python 3.14 test qualification separate from any
+  profiling-interpreter compatibility claim.
+- Use as many execution agents as materially help, while preserving roadmap
+  dependency order and packet boundaries.
+- Before concurrent writing begins, name each owner, worktree, immutable base
+  SHA, file allowlist, expected artifact, and merge checkpoint. Writers may
+  share a checkout only when their file ownership is explicit and
+  non-overlapping.
+- Coordinate shared contracts, integration order, acceptance, primary
+  validation, review accounting, CI, PR/merge operations, and packet/ledger
+  accounting across the participating agents.
+
+## Tools
+
+Use `rg` for exact paths, strings, routes, schema fields, and documentation
+claims. Use GitNexus first for unfamiliar cross-cutting architecture, execution
+flows, or impact. For exact symbols, callers, references, diagnostics, and
+edits, use GitNexus with native repository tools such as `rg`, the editor,
+type-checker diagnostics, and focused tests. Do not repeat the same lookup
+across tools without a concrete uncertainty.
+
+Before editing a function, class, or method, run upstream GitNexus impact and
+report any HIGH or CRITICAL blast radius. Before committing, rerun
+`python3 scripts/bootstrap_dev_environment.py --component gitnexus --check`,
+then run GitNexus `detect_changes` against `origin/main` with the exact physical
+root and branch:
+`node tools/gitnexus/node_modules/gitnexus/dist/cli/index.js detect_changes --scope compare --base-ref origin/main --repo "$(pwd -P)" --branch "$(git branch --show-current)"`.
+Never target the ambiguous repository alias or a potentially stale local
+`main` branch.
+
+Use `agent-perf` for every CPU or speed claim. Profile a deterministic synthetic
+workload, also run the identical workload without a profiler, and compare one
+suspected cause at a time. The kernel performance objectives and early-stop
+rules are in the qualification and bakeoff documents.
+
+## Branches, issues, and review
 
 - Do not commit directly to `main`.
-- Start ordinary work and K1 from current `main` with a short-lived branch.
-  For the approved reset only, start K1A–K9 from
-  `kernel/0.26-integration`; K10 creates `release/0.26.0` from audited current
-  `main`, incorporates qualified integration once, and targets `main`.
-- Use branch prefixes `feature/`, `fix/`, `docs/`, `chore/`, `test/`, `release/`, `hotfix/`, or `kernel/`. Reserve `kernel/` for tasks in the approved Product Kernel Reset roadmap.
-- Keep each branch focused on one issue, one reviewable task, or one release.
-- Do not create a long-lived `develop` branch. The non-publishable
-  `kernel/0.26-integration` branch is the sole temporary exception and exists
-  only for K1A–K10.
-- Do not mix release prep with unrelated feature work.
-- Push task branches and open a PR for all changes headed to `main` or
-  `kernel/0.26-integration`.
-- Prefer squash merge for ordinary task PRs so `main` stays readable.
-- Use the PR as the review artifact even when there is only one maintainer.
-
-Recommended branch names:
-
-```text
-feature/<issue-number>-short-description
-fix/<issue-number>-short-description
-docs/<issue-number>-short-description
-chore/<issue-number>-short-description
-test/<issue-number>-short-description
-release/0.4.0
-hotfix/0.3.3
-kernel/0.26-integration
-kernel/k1a-legacy-quarantine
-kernel/k3-ingest-tail
-```
-
-Before starting a task branch:
-
-```bash
-git switch main
-git pull --ff-only
-git switch -c docs/123-short-description
-```
-
-## Agent Boundaries
-
-Codex may create task branches, write tests, update docs, run local gates, prepare PR summaries, prepare release branches, and prepare changelog/version changes.
-
-Codex must not do these without explicit maintainer approval:
-
-- Push directly to `main`.
-- Create or push release tags.
-- Publish to TestPyPI or PyPI.
-- Add PyPI or TestPyPI API tokens.
-- Publish from a local machine.
-- Change privacy semantics.
-- Rename the PyPI distribution, import package, CLI command, plugin name, MCP tools, schema IDs, or stable JSON contracts.
-- Delete branches.
-- Force-push shared branches.
-
-Publishing must happen only through the approved GitHub Actions Trusted Publishing workflow and protected `testpypi`/`pypi` environments.
-
-## Issue And Milestone Workflow
-
-Use GitHub issues as the normal unit of work once the task is non-trivial. A branch should usually map to one issue and close it from the PR.
-
-Recommended labels:
-
-```text
-bug
-docs
-packaging
-release
-privacy
-security
-performance
-dashboard
-cli
-mcp
-parser-compat
-good-first-issue
-blocked
-1.0-blocker
-```
-
-Recommended milestones:
-
-```text
-0.4.0
-1.0-readiness
-1.0.0
-```
-
-Use patch releases for public blockers such as broken PyPI installs, missing package data, broken CLI entry points, privacy leaks, bad plugin installs, or bad runtime pins. Put planned stabilization work into the next minor release instead of bundling it into a patch.
-
-## Performance Work
-
-Use the `agent-perf` skill and CLI when optimizing localhost API endpoints, dashboard refreshes, report generation, content indexing, parser or SQLite hot paths, or other latency- or CPU-sensitive code, and when investigating a performance regression or making a speedup claim.
-
-Install the repository's pinned profiling tools with `uv sync --group performance`. Profile the smallest repeatable workload with synthetic or anonymized inputs; never profile production, live private databases, arbitrary processes, or real Codex session content. Record the identical workload without a profiler before making a performance claim. Change one suspected cause at a time, rerun the unprofiled workload, and use `agent-perf compare` only to compare attribution evidence rather than as proof of a speedup.
-
-### Code intelligence tools
-
-Use GitNexus for repository orientation, architecture, execution-flow tracing, subsystem discovery, and broad change-impact analysis.
-
-Start unfamiliar or cross-cutting GitNexus work with the repository context resource, then open only the relevant cluster or process:
-
-| Resource | Use for |
-| -------- | ------- |
-| `gitnexus://repo/codex-usage-tracker/context` | Codebase overview and index-freshness check |
-| `gitnexus://repo/codex-usage-tracker/clusters` | Functional-area discovery |
-| `gitnexus://repo/codex-usage-tracker/processes` | Execution-flow discovery |
-| `gitnexus://repo/codex-usage-tracker/process/{name}` | One selected step-by-step execution trace |
-
-Use Serena for exact symbol definitions, references, implementations, type-aware navigation, diagnostics, and symbol-level edits or refactors.
-
-For unfamiliar or cross-cutting work, use GitNexus to identify where to investigate, then use Serena to verify the exact symbols before editing.
-
-Treat GitNexus relationships as navigational guidance. Treat Serena as authoritative for precise symbol resolution and modification.
-
-Confirm architectural conclusions against the source and relevant tests before changing behavior. Use `agent-perf` and an identical unprofiled workload for performance evidence; GitNexus may locate a hot path but does not prove a regression or speedup.
-
-Do not repeat the same lookup in both tools unless validating an uncertain relationship or investigating conflicting results.
-
-Refresh the GitNexus index after major branch changes, file moves, or architectural
-refactors with `gitnexus analyze --index-only .`. Use the repo-local GitNexus skill
-matching the task when a client supports it; do not load every GitNexus workflow by
-default.
+- Start each packet from current `main` or the exact merged dependency named by
+  the packet, using a focused branch/worktree.
+- Use Conventional Commit prefixes and the ordinary branch prefixes
+  `feature/`, `fix/`, `docs/`, `chore/`, `test/`, `release/`, or `hotfix/`.
+- Keep one packet per PR unless the packet explicitly defines measured commit
+  boundaries.
+- Never delete a branch or worktree, rewrite history, force-push, publish, tag,
+  or change an external account without the required authority.
+- Linear is the intended program tracker. `docs/roadmap/LINEAR_BACKLOG.md` is
+  the source record, but do not create or update Linear work without explicit
+  maintainer direction.
+- The delegation policy above is standing maintainer authorization for this
+  roadmap. A parallel lane still requires explicit eligibility in the
+  controlling roadmap, design document, or packet contract.
+- After implementation and primary validation, use at most one comprehensive
+  read-only reviewer. Record total findings, accepted findings, reviewer token
+  status, and tokens per accepted finding.
 
 ## Validation
 
-Run focused tests first, then broader checks. Run the full local CI gate before opening or updating PRs that touch release, packaging, CLI contracts, MCP behavior, dashboard behavior, privacy behavior, schemas, generated docs/assets, or bundled plugin/skill files.
-
-## Source Inspection And Tool Output
-
-Large command outputs in Codex chat can be visually compacted by the transcript renderer. When inspecting source, especially after broad `rg`, `sed`, `nl`, generated dashboard assets, logs, or workflow output, do not treat a mangled rendered snippet as proof that the file is corrupt. Prefer small targeted file windows, `git diff`, `python -m py_compile`, focused tests, and CI as the source of truth. If exact syntax matters, inspect a narrow range or use a parser/compiler rather than relying on large printed source dumps.
-
-Use this progressive inspection ladder:
-
-1. Choose one first locator based on the question:
-   - Use GitNexus for an unfamiliar subsystem, cross-cutting architecture, execution flow, dependency cycle, or broad change impact.
-   - Use Serena for a known code symbol, exact definition, callers, references, implementations, types, diagnostics, or a symbol-level edit.
-   - Use `rg -n` for an exact string, route, configuration key, SQL fragment, schema field, error text, documentation claim, or non-symbol asset.
-   - Use `rg --files` when the filename or owning directory is unknown.
-2. Do not run all locators by default. After GitNexus selects a code path, use Serena only on the relevant symbol before editing. After `rg` finds an exact non-code match, inspect that narrow file window directly.
-3. Inspect symbol metadata, callers, and references before requesting source bodies.
-4. Read the smallest useful source window, normally one symbol or roughly 80-160 lines.
-5. Expand only to a dependency, caller, test, or contract needed to answer the current question.
-6. Run the smallest relevant validation, then broaden checks in proportion to risk.
-
-Start GitNexus searches with a small result limit and without `--content`; request full symbol content only after selecting the relevant process or symbol. Use Serena symbol overviews and reference queries before reading whole files. Do not dump entire directories, generated bundles, large JSON, full database rows, or multiple long files into one tool response.
-
-Within one uninterrupted task, do not reread unchanged files, guidance, roadmap sections, or the complete diff unless context was compacted, the branch or guidance changed, evidence conflicts, or exact verification requires it. Persist durable cross-cutting findings in the active task report or execution ledger and reuse them. For edits, prefer a path-scoped diff; inspect the complete diff once when it reaches a stable review checkpoint.
-
-Redirect oversized machine output to an ignored temporary file and extract a bounded summary with `rg`, `jq`, a parser, or a short read-only script. Keep the exact command and artifact path when the full result is evidence, but do not stream the full artifact into the conversation. Batch independent narrow lookups when useful, but do not concatenate unrelated large outputs.
-
-These rules optimize context use, not correctness. Reopen source or rerun evidence whenever behavior, safety, privacy, or a public contract remains uncertain.
+Run focused tests first. Use the repository-owned profiles:
 
 ```bash
-just v
+just vp  # fast maintained checks
+just v   # complete local CI profile
+just vc  # release/build candidate profile
 ```
 
-For release, packaging, CLI, MCP, or Console changes, also build and smoke the
-exact wheel:
+For documentation-only authority work, at minimum run:
 
 ```bash
-python -m build
-python scripts/check_release.py --dist
-python scripts/smoke_installed_package.py \
-  --artifact-dir dist \
-  --version 0.27.0
-```
-
-For documentation-only branches, at minimum run:
-
-```bash
-python scripts/check_release.py
+.venv/bin/python scripts/check_release.py
 git diff --check
 ```
 
-## Release Branches
+Broaden to `just v` or `just vc` whenever scope, packaging, release,
+database/schema, CLI, MCP/plugin/skill, generated assets, or public contracts
+change. Never bypass hooks. If project tools are missing from `PATH`, retry once
+with `.venv/bin` prepended.
 
-Use release branches only for version/changelog/pinning/publish prep, for example `release/0.4.0` or `hotfix/0.3.3`.
+Before completion, inspect `git status`, the diff stat, the stable diff,
+relevant checks, and staged files for secrets or private data. A packet is done
+only when its acceptance criteria and measurements pass, its checkbox/status
+are updated, and every remaining risk or approval gate is named.
 
-Release branches may include:
+## Release safety
 
-- Version bumps.
-- `CHANGELOG.md` updates.
-- Install/version wording updates.
-- Runtime package pins.
-- Publish workflow tweaks.
-- Release notes.
-- Final smoke-test fixes directly tied to release readiness.
-
-Release branches must not include unrelated features.
-
-Recommended release sequence:
-
-```bash
-git switch main
-git pull --ff-only
-git switch -c release/0.4.0
-# version/changelog/release edits
-python -m ruff check .
-python -m mypy
-python -m pytest
-python -m pytest --cov=codex_usage_tracker --cov-report=term-missing
-python -m compileall src
-find src/codex_usage_tracker/plugin_data/dashboard \
-  -type f -name '*.js' -exec node --check '{}' ';'
-python scripts/check_release.py
-git diff --check
-rm -rf dist build src/codex_usage_tracker.egg-info src/codex_usage_tracking.egg-info
-python -m build
-python -m twine check dist/*
-python scripts/check_release.py --dist
-git add .
-git commit -m "Prepare 0.4.0 release"
-git push -u origin release/0.4.0
-```
-
-Open a PR to `main` and merge only after CI passes. After merge, tag from updated `main`, not from an unreviewed release branch, and only after explicit maintainer approval:
-
-```bash
-git switch main
-git pull --ff-only
-git tag -a v0.4.0 -m "codex-usage-tracker 0.4.0"
-git push origin v0.4.0
-```
-
-## Privacy Rules
-
-- Never commit real Codex session logs.
-- Never commit real prompts, assistant text, tool outputs, pasted secrets, message snippets, or raw Codex logs.
-- The local content index may store bounded snippets in the user-owned SQLite database by approved design. Do not expose indexed/raw content through default CSV, generated HTML, support bundles, screenshots, aggregate JSON, fixtures based on real logs, or commits.
-- Raw context may be read during refresh/content indexing or explicit selected-call context loading. Keep shareable outputs aggregate-first unless a command is explicitly documented as a local raw/content export.
-- Keep fixture data synthetic.
-- Keep local SQLite databases, CSV exports, HTML dashboards, caches, and virtualenvs out of git.
-- Do not hard-code real current USD model pricing in source; refresh the local config from OpenAI's published pricing docs or use manual local overrides. Internal Codex model estimates must be explicitly marked as estimates with source and rationale metadata.
-- Source-stamped Codex credit rate-card snapshots must include source/date metadata, confidence labels, and local override support. Manually copied allowance remaining values stay in local config only.
-
-## Definition Of Done
-
-- Parser and content-index handling are covered by synthetic session logs.
-- SQLite refresh is idempotent.
-- MCP tool functions return concise aggregate data by default; content-aware tools must be explicit local investigation surfaces.
-- Dashboard generated HTML is aggregate-first and does not embed indexed/raw content.
-- Doctor, summary presets, dashboard, and expensive-call views work from CLI and MCP wrappers.
-- `codex-usage-tracker install-plugin` can register the installed package without relying on a source-checkout symlink.
-- `python -m codex_usage_tracker` and `codex-usage-tracker --version` both work.
-- Wheel and source distribution builds include plugin assets and the Codex skill.
-- `scripts/check_release.py --dist` passes before any public release.
-- Pricing coverage clearly separates configured, estimated, and unpriced model usage.
-- Codex credit coverage clearly separates exact rate-card matches, inferred aliases, and missing credit rates.
-- Dashboard Calls and Threads views share filters, totals, and aggregate-first hover details.
-- Dashboard usage docs are updated when the visible dashboard workflow changes, and screenshots must be generated from synthetic data only.
-- Dashboard refresh is localhost-only, generated HTML stays aggregate-first, and context loading is lazy, localhost-only, explicit, redacted, and not embedded in the static HTML payload.
-- Subagent calls preserve logged parent-session metadata, latch to parent thread labels when available, and auto-review attachment is clearly marked when inferred.
-- Tests and compile checks pass.
+Publication occurs only from merged `main` or its exact release tag through the
+protected build-once workflow. Do not publish from a local machine. Do not
+create or push tags, change package/plugin/public schema identities, or rename
+the distribution without explicit maintainer approval. CK-16 owns versioning,
+release notes, exact artifact hashes, promotion evidence, and public-install
+smoke.
 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
 This project is indexed by GitNexus as **codex-usage-tracker** (2777 symbols, 5498 relationships, 236 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
+> Index stale or pinned tool missing? Run `python3 scripts/bootstrap_dev_environment.py` from the exact project root. It uses only the integrity-locked repository-private GitNexus 1.6.9 tool; never use `npx`, `latest`, or a global install.
 
 ## Always Do
 
 - **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
-- **MUST run `detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows. For regression review, compare against the default branch: `detect_changes({scope: "compare", base_ref: "main"})`.
+- **MUST run `detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows. For regression review, use the exact physical worktree, current branch, and remote base `origin/main`; never use an ambiguous repository alias or stale local `main`.
 - **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
 - When exploring unfamiliar code, use `query({search_query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
 - When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `context({name: "symbolName"})`.

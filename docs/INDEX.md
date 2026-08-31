@@ -1,0 +1,376 @@
+# Documentation Authority
+
+This is the single entry point for the agent-first clean cutover. Active
+documents below are mutually controlling: each owns one implementation area,
+and none of the archived documents may override them.
+
+## Current packet boundary
+
+CK-07A's [evidence](decisions/evidence/ck07a/fact-backed-oracle-and-seam-qualification-evidence.json)
+records 80 / 80 variants after CK-07B/C/D/E and CK-03–07 replay. The
+[CK-08 gap](decisions/evidence/ck08/fact-backed-oracle-prerequisite-gap.json)
+is preserved/superseded; CK-04 runs 3/4 remain waived and five-run success
+unclaimed. Historical CK-08 covers 21 plans/42 variants, but shared truth,
+post-materialization paging, mixed timing and unproved scale cannot admit
+projections; [`corrective-gates-v1`](decisions/evidence/ck08r0/corrective-gates-v1.json)
+keeps CK-09 blocked.
+
+CK-08R2 is complete on merge: two supported direct plans now use bounded
+physical keyset SQL; 19 plans retain explicit gaps without projection.
+Retained CK-08R3 `a28e9cdbff8e48d334712a449fdcee111c725673` then stopped
+before scale on first/deep EvidenceService EXPLAIN. CK-08R3A corrected that
+physical path in PR #417 and was hosted-green, squash-merged, and exact-main
+identity verified at `38537f6cee42ad4ba2fb6e45354e410053c7a7cd`.
+CK-08R3 then passed both frozen synthetic profiles, all selector/view/direction
+outcomes, typed seven-part truth, late-event, truncation, cursor, and
+query-only contracts. PR #425 was hosted-green, squash-merged, and exact-main
+verified at `0fad272b3205614fb254398c9c9dc0a56d5ba7cd`. CK-08R3 is complete.
+CK-08R1's schema-valid
+[`answer-truth-requalification.v2`](decisions/evidence/ck08r1/answer-truth-requalification-v2.json)
+records 80/80 rows, grades, order, evidence, provenance, null semantics,
+closure, grading isolation, and mutation proof. PR #439 passed hosted CI,
+squash-merged, and was exact-main verified at `0832b854`; CK-08R1 is complete.
+CK-08R4 is Ready through CK-07R1's post-terminal roadmap dependency
+completion. Independent
+truth now consumes [`answer-semantics.v1`](../config/agent-kernel/answer-semantics-v1.json);
+The linked [CK-08R3A schema/publication requalification authority](decisions/evidence/ck08r3a/schema-publication-requalification-authority.json)
+binds the resulting 57-index schema digest, synthetic publication fixture
+manifests, and compatible tiny-accounting EXPLAIN expectation accepted through
+the exact PR #417 cohort. The exact
+[final-shared authority](decisions/evidence/ck08r3a/final-shared-authority.json)
+keeps predecessor handling rejection-only and binds exact
+zero-based nonnegative turn-rank equality, including valid rank 0 and
+preserved rank >0, across manifestation, observation, persisted turn, and
+EvidenceService evidence. Its exact atomic seven-production/nine-support
+cohort and fixture/DDL identities, including the session-leading lifecycle
+index, are permitted, not accepted.
+The linked [CK-08R3A bounded-session portability authority](decisions/evidence/ck08r3a/bounded-session-merge-sort-portability-authority.json)
+supersedes only the prior marker-free EXPLAIN wording: SQLite 3.45.1 may emit
+at most one structurally proven `USE TEMP B-TREE FOR ORDER BY` for the deep
+timeline/allowance session branch, whose merge input is at most one row. The
+lifecycle branch, every first page, every other deep shape, all result/cursor
+truth, and all generic forbidden-plan checks remain bounded and fail closed;
+the authority changes no production, DDL, or schema identity.
+The linked [CK-08R3A portable-plan branch-ownership authority](decisions/evidence/ck08r3a/portable-plan-branch-ownership-authority.json)
+supersedes only the support proof: full EXPLAIN row ids, parents, direct
+siblings, and leftmost ancestry must bind the sole marker to the unique
+session-event branch. A marker under calls, tools, lifecycle, or an ambiguous
+lookup chain is rejected; the corrected support test and production cohort are
+accepted through PR #417. Premerge focused, dual-SQLite, full, package,
+safety, and review gates plus hosted CI passed. The duplicate postmerge full
+runtime rerun was environment-limited by ENOSPC before completion; fresh
+exact-main identities and authority/scope/documentation checks passed, and no
+product assertion failed.
+R1C is accepted at exact main `fb0c57886097a6b985d2f321b2de858cbdfc0a97`.
+The [CK-08R1B answer-semantics join authority](decisions/evidence/ck08r1b/answer-semantics-join-authority.json)
+binds the exact R1A producer artifacts, preserves R1C closure independence,
+and permits only the proved query admission, production-owned synthetic
+ hierarchy materialization after every authoritative relationship is applied,
+ explicit non-null required tool coordinates and straddling lifecycle,
+duplicate-ID rejection, Q-REV-03 direct-fact/internal-formula binding, and
+deterministic 80-case production-compiler fixture transition. Its narrow
+selected-cohort acceptance correction binds late-cycle/reverse-chain/ambiguous
+parent rejection and production-independent null-coordinate parity. Its final
+writer-closure correction adds the publication writer and its focused tests to
+the atomic cohort: the writer supplies the complete connected existing session
+component, preparation recomputes every changed descendant after reparenting,
+and unaffected rows remain exact. The final multi-publication correction keeps
+the same 23 paths and binds native-parent snapshot seeding plus authoritative
+late-parent ordering: newer event/source coordinates win, exact replay is
+idempotent, and conflicting equal-order parent or basis declarations fail
+closed. The final selected-cohort correction additionally requires direct
+`SessionObserved` reparenting to load and emit the complete persisted
+descendant subtree, treats equal six-part coordinates as idempotent only when
+parent, basis, and occurrence provenance are exact, and selects one
+current-batch winner by that six-part order before logical identity. PR #430
+passed hosted CI, squash-merged, and was exact-main verified at `9e9332b3`.
+R1B and R1 are complete on merge; CK-08R4, CK-08RG, CK-09, and CK-07 remain
+blocked or held by their existing gates.
+CK-QG1A0 gated the selected R2 PageExecutor successor; QG1A removed its two
+C/B/B findings and is accepted at exact main `30983d4b5005e7e2a507757c76a3c05ab56281e6`;
+the linked
+[CK-QG1 exact maintainability baseline transition authority](decisions/evidence/ckqg1/maintainability-baseline-transition-authority.json)
+binds the accepted-main writer provenance finding at score 35/count 1 to the
+single successor baseline digest `fda777e28db7a0696f29b55c9d694f99d987413b206d8e323f217b4fa6a73ad5`;
+PR #392 then enforced that exact normalized baseline without weakening
+thresholds, exemptions, release budgets, privacy, or spike semantics. Hosted
+Console and Python 3.10/3.14 passed before squash merge and fresh exact-main
+verification at `68050b9313ccc5be8e1fcd0ccd5b95cb4173f3ff`. CK-QG1 is
+complete; CK-08RG remains blocked on CK-08R4. The v2 [CK-QG1/R1B writer
+transition authority](decisions/evidence/ckqg1/maintainability-baseline-transition-authority.json)
+binds current main `dd771073` writer `13da341f…` to reviewed PR #430 head
+writer `d163e6c5…` without changing the active baseline
+`fda777e2…`; both states produce the same 20 normalized findings and the
+authority remains permitted-not-accepted. CK-07R1A separately corrected
+PR #394's exact
+hosted lifecycle-tail failure without a budget waiver.
+CK-07R1A0 path authority remains accepted at exact main
+`519b503aa3b23019033b6481687c08b23fc6c31e`; its linked [source-digest
+authority](decisions/evidence/ck07r1a0/lifecycle-source-digest-authority.json)
+and [run-invocation authority](decisions/evidence/ck07r1a0/lifecycle-run-invocation-authority.json)
+keep CK-07R1 `blocked_hold`
+(`docs/decisions/evidence/ck07r1a0/lifecycle-run-invocation-authority.json`).
+The accepted source history retains R3A preparation `6689d61f…` as a
+historical predecessor and R1B/current exact-main preparation `7d1831ff…` as
+the live predecessor. The sole CK-07 worker-prequalification successor is the
+atomic `66c015de…` preparation, `f108dbb4…` benchmark, and `4c514889…`
+lifecycle-test cohort derived from exact main `6c08ecd9`. Mixed or incomplete
+cohorts, prior candidate `e204e0da…`, and historical candidate `d192c858…`
+fail closed. PR #394 remains a stale failed
+read-only witness; it is not updated, rerun, or merged. The old argv-guard attempt remains the historical
+`pre_child_argv_guard_failure`: exit 2 after `0.075241709` seconds, with no
+child, PID, handshake, token, output, ledger, stdout, stderr, receipt, or
+runtime evidence. The corrected guard is
+`(sys.argv[0], *sys.argv[1:]) == LAUNCH_COMMAND[1:]`. The run authority freezes
+the exact launch, fixture, revoked malformed dispatch value, 720-second wrapper
+timeout, four-path non-overwriting preflight, evidence, token, and no-retry
+contract while preserving the 5000/120000/100/500/500 ms budgets. This
+versioned
+[`shared-successor-overlay-authority-v1`](decisions/evidence/ck07r1a0/shared-successor-overlay-authority-v1.json)
+is the only additive consumer bridge: accepted CK-08R1B v1, CK-08R1 evidence,
+and CK-QG1 authority bytes remain exact, and the overlay grants neither
+implementation acceptance nor launch authority. The separate versioned
+[`lifecycle-consuming-boundary-authority-v1`](decisions/evidence/ck07r1a0/lifecycle-consuming-boundary-authority-v1.json)
+preserves those bytes and, only after its hosted-green squash merge and
+exact-main verification, authorizes existing worker
+`019fbfe2-8fe4-7de2-9264-d58572366727` to issue exactly one frozen synthetic
+qualification command from the bound cwd. The token remains
+`unspent_unavailable` until all immediate prelaunch checks pass and is consumed
+only at the first exact child PID/argv/cwd/owner/handshake. It is
+non-refundable, with no retry, restart, replacement, live data, PR #394
+mutation, or downstream readiness. Its hosted Console gate keeps Chromium
+coverage while pinning the canonical HTTPS Ubuntu archive and bounding both
+browser installation and the complete job; a mirror stall fails closed and
+cannot be treated as hosted-green. The authority task itself does not launch,
+consume the token, or create output, ledger, stdout, stderr, or receipt. The
+frozen launcher imports the shared verifier before ledger/fork; its
+`worker_prequalification` path requires the complete consuming authority,
+frozen cwd, capacity at or above 10 GiB, and candidate
+`HEAD == fetched origin/main == live origin/main`, so a feature branch or stale
+main fails before side effects. After authority merge, the frozen launch lane
+must fetch and fast-forward only from the `67bb1a…` prequalification base to
+that exact merged main while preserving and recomputing all three dirty
+candidate bytes; reset, rebase, stash, or any byte drift fails closed.
+Historical V9/V10 witnesses remain untouched. Worker ownership is a normative coordinator
+binding to that exact existing Codex task and recomputed repository evidence,
+not runtime or cryptographic per-task authentication. The launcher neither
+accepts nor claims a self-asserted worker credential. The root
+[`AGENTS.md`](../AGENTS.md) standing authorization permits the coordinator and
+worker to continue through this repository workflow without repeated user
+approval while every exact fail-closed gate remains binding. The central authority is
+[REMAINING_EXECUTION_PLAN.md](roadmap/REMAINING_EXECUTION_PLAN.md).
+
+The first v1 consuming-boundary command invocation terminated at
+`child_start_handshake` before token persistence or child release. Its sole
+durable artifact is the immutable
+`output/ck07r1/lifecycle-requalification-v1.launch-token.json` ledger with
+SHA-256 `5c2b42eca6a3e54cf4163226bc55f3c75aa35112c4ed0342c11f4e39cb9922be`,
+state `prelaunch_failed`, and `token_consumed=false`; no verified child,
+runtime output, stdout, stderr, or receipt exists. The versioned
+[`lifecycle-prelaunch-recovery-authority-v1`](decisions/evidence/ck07r1a0/lifecycle-prelaunch-recovery-authority-v1.json)
+is the only corrective path. It preserves the v1 ledger byte-for-byte and
+permits the same worker to make one new command invocation only after the
+portable parent/child process-snapshot correction, exact corrected cohort,
+authority merge, exact-main verification, and immediate gates all pass. This
+is not a retry, restart, replacement, or refund of a launched process because
+zero successful child launches were observed and the original one-run token
+remains `unspent_unavailable`. The recovery command uses only the non-colliding
+`lifecycle-requalification-v2` output, ledger, stdout, and stderr paths; the
+v1 invocation and ledger are terminal and can never be reused or overwritten.
+
+The sole v2 invocation is also terminal. Child PID `20482` was verified before
+the one-run token was consumed at `2026-08-19T19:44:55Z`; the child then exited
+70 and the launcher durably recorded `failed_after_launch`. The immutable v2
+ledger SHA-256 is
+`570e27824ee04a51aa4012adb461bd4aebb00b61541f2477fd9e1665854325a2`;
+stderr SHA-256 is
+`4cf4b10fd04f20a190e4ac41898d25b9295b3dc9d7addead8a81edd27b3aca2f`;
+stdout is the empty-file SHA-256
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`.
+Output and receipt are absent. The first child failure proves that the frozen
+benchmark incorrectly required `APPEND_SAFE_SMALL`: the accepted planner
+correctly selected `APPEND_SAFE_LARGE` for 1,369 selected records against the
+unchanged 32-record small-tail ceiling. The additive versioned terminal-failure correction authority,
+[`lifecycle-terminal-failure-correction-authority-v1`](decisions/evidence/ck07r1a0/lifecycle-terminal-failure-correction-authority-v1.json)
+binds both terminal ledgers, the consumed non-refundable token, the exact
+planner reproduction, and the only permitted two-file benchmark/test
+correction. It authorizes no invocation, retry, restart, replacement, refund,
+receipt fabrication, `post_single_run`, `final_accepted`, or downstream
+readiness. A corrected implementation may be reviewed and prequalified only
+through deterministic synthetic non-consuming evidence; the existing
+receipt-required runtime acceptance gate remains unsatisfied and CK-07R1,
+CK-08R4, CK-08RG, and CK-09 remain blocked pending a separate roadmap decision.
+The additive versioned
+[`lifecycle-terminal-failure-clean-commit-authority-v1`](decisions/evidence/ck07r1a0/lifecycle-terminal-failure-clean-commit-authority-v1.json)
+preserves the terminal-failure v1 authority byte-for-byte and binds PR #448
+base `652f2166…`, source head `927aa06f…`, and its exact seven candidate and
+terminal-evidence paths. It admits either the exact all-or-none dirty
+prepublication representation over the byte-identical authority-main tree or
+the exact clean committed PR/integrated representation. Mixed, partial, extra,
+wrong-base, wrong-tree, wrong-head, or wrong-byte states fail closed. This
+clean-committed transition representation bridge grants no implementation or
+runtime acceptance and
+does not authorize a command, launch, token refund, retry, restart,
+replacement, receipt, or downstream transition.
+
+The additive versioned
+[`lifecycle-terminal-failure-clean-commit-authority-v2`](decisions/evidence/ck07r1a0/lifecycle-terminal-failure-clean-commit-authority-v2.json)
+preserves both clean-commit v1 authority files byte-for-byte and closes the
+clean-hosted-checkout environment seam exposed by PR #448. It binds the one
+exact workflow change that creates the matrix interpreter's repository-local
+`.venv` with `python -m venv --system-site-packages .venv` after the existing
+tooling install and before verification. The v2 verifier admits only the exact
+18-path authority delta or exact 18-plus-seven clean integrated transition;
+missing, extra, partial, wrong-workflow, wrong-lineage, and wrong-candidate
+states fail closed. It adds no network install, qualification invocation,
+launch, refund, retry, receipt, runtime acceptance, or downstream authority.
+
+PR #448 subsequently passed hosted Console and Python 3.10/3.14, squash-merged
+the exact seven-path correction/evidence cohort, and was fresh exact-main
+verified at `1d0466b1b2992b48c5272dc4598606eeaea4dae2`. The additive
+[`lifecycle-post-terminal-completion-authority-v1`](decisions/evidence/ck07r1a0/lifecycle-post-terminal-completion-authority-v1.json)
+is the separate roadmap decision reserved by the terminal-failure authority.
+It accepts the merged deterministic small/large planner, publication,
+recovery, full/package, review, hosted, and exact-main evidence only as
+CK-07R1 dependency completion. The immutable v2 run remains
+`failed_after_launch`, the token remains consumed/non-refundable,
+`runtime_acceptance=not_claimed`, planner-valid receipt/output remain absent,
+and `post_single_run` and `final_accepted` remain unavailable. No command,
+artifact mutation, receipt fabrication, refund, retry, restart, replacement,
+or production-semantic change is authorized. After this authority transition
+is hosted-green, squash-merged, and fresh exact-main verified, CK-08R4 is the
+sole Ready successor; CK-08RG and CK-09 remain blocked.
+
+The historical V11 launcher contract required construction and validation of the exact overlay/cohort-bound
+receipt and non-null stdout/stderr/output evidence before its first durable
+`completed` finalization. Evidence read/hash/parse/validation/finalization
+failures are terminal `failed_after_launch`. Temporary parent SIGINT/SIGTERM
+handlers route every wait interruption/error through bounded TERM/KILL/reap
+before terminal persistence and remain installed through evidence, receipt,
+and terminal ledger finalization; originals restore only after the terminal
+state attempt. Every terminal fallback persistence call masks SIGINT/SIGTERM
+with the existing ignore guard and restores the prior temporary handlers
+afterward; the outer final restoration of original handlers remains last. The
+fork child ignores SIGINT/SIGTERM while
+waiting for parent release and maps every pre-release failure to
+`os._exit(71)`; parent cleanup rejects nonpositive PIDs. Unique same-directory
+`mkstemp` ledger updates close and unlink on failed or interrupted
+write/fsync/replace/post-replace paths and retain durable consumed/no-retry
+`failed_after_launch` evidence without temporary residue. Interpreter identity
+is the lexical repository-worktree `.venv/bin/python` plus the matching lexical venv
+`sys.prefix`; base interpreters, symlink/resolved equivalence, wrong-worktree
+venvs, and prefix mismatch are rejected. That contract cannot authorize
+another invocation after the consumed terminal v2 run.
+
+The finite source/runtime state machine remains terminal at
+`failed_after_launch`: `post_single_run` is unavailable without a complete
+planner-valid receipt bound to its exact dynamic evidence identity, and
+`final_accepted` remains unavailable. The separate roadmap dependency state is
+`completed_post_terminal_deterministic_evidence`; it does not claim or imply
+runtime qualification.
+
+## Authority set
+
+| Order | Document | Controls |
+| ---: | --- | --- |
+| 1 | `docs/decisions/PRODUCT_DIRECTION.md` | Product definition, responsibility boundary, non-goals, locked decisions, and success measures. |
+| 2 | `docs/product/SUPPORTED_QUESTION_CONTRACTS.md` | Supported intents, answer grades, evidence, performance classes, named presets, and unsupported conclusions. |
+| 3 | `docs/architecture/LOGICAL_KERNEL_CONTRACT.md` | Physical-design-independent entities, fields, identities, time, missingness, provenance, and publication semantics. |
+| 4 | `docs/architecture/FORMULA_AND_SELECTOR_CONTRACT.md` | Executable formula semantics, answer-field bindings, selector ownership, provenance, and exact comparison. |
+| 5 | `docs/architecture/PLAN_OPERAND_AND_FACT_CONTRACT.md` | Executable plan-to-operand/direct-fact bindings, pure compiler boundary, valuation relation, and missing canonical facts. |
+| 6 | `docs/architecture/PHYSICAL_ARCHITECTURE_BAKEOFF.md` | Candidate A/C/D experiment, fixtures, workloads, measurements, and selection decision. |
+| 7 | `docs/architecture/TARGET_ARCHITECTURE.md` | Package ownership and runtime boundaries after the bake-off. |
+| 8 | `docs/architecture/ADAPTER_CONTRACT.md` | Codex source ingestion, normalization, capabilities, cursors, replacement, duplicates, and the future-agent seam. |
+| 9 | `docs/architecture/PUBLICATION_REFRESH_RECOVERY.md` | Refresh state machine, dirty keys, small tails, large artifacts, crashes, promotion, and rollback. |
+| 10 | `docs/architecture/QUERY_EVIDENCE_PROJECTION_CONTRACTS.md` | Named plans, bounded composition, evidence, pagination, projections, valuation, and result envelopes. |
+| 11 | `docs/product/AGENT_SETUP_AND_MCP_EXPERIENCE.md` | First use, history selection, host waiting, reopen, refresh/expansion, call budgets, and skill behavior. |
+| 12 | `docs/quality/QUALIFICATION_PLAN.md` | Synthetic truth, production-shape profiling, benchmarks, installed-agent trials, crash tests, and ratchets. |
+| 13 | `docs/roadmap/AGENT_FIRST_CLEAN_CUTOVER.md` | The only authoritative implementation roadmap, dependencies, gates, cutover, and release. |
+| 14 | `docs/roadmap/REMAINING_EXECUTION_PLAN.md` | Remaining task graph, readiness, role routing, ownership locks, and allowed/forbidden parallelism. |
+| 15 | `docs/roadmap/TASK_PACKETS.md` and `docs/roadmap/tasks/` | Completion accounting and one agent-executable contract file per delegated task. |
+| 16 | `docs/roadmap/LINEAR_BACKLOG.md` | Historical Linear-ready mapping; no Linear change is authorized by the decomposition. |
+
+## Area ownership
+
+| Question | Authority |
+| --- | --- |
+| What product are we building? | `PRODUCT_DIRECTION.md` |
+| Can the product answer this question, and how? | `SUPPORTED_QUESTION_CONTRACTS.md` |
+| What does a session, turn, call, tool, resource, observation, or publication mean? | `LOGICAL_KERNEL_CONTRACT.md` |
+| What exactly does a formula compute, and how must selector evidence resolve? | `FORMULA_AND_SELECTOR_CONTRACT.md` |
+| How do named plans derive formula operands and direct facts, and which missing fact representations are authoritative? | `PLAN_OPERAND_AND_FACT_CONTRACT.md` |
+| Which physical schema is allowed? | The completed decision artifact required by `PHYSICAL_ARCHITECTURE_BAKEOFF.md` |
+| Which package owns a behavior? | `TARGET_ARCHITECTURE.md` |
+| How does Codex JSONL become canonical facts? | `ADAPTER_CONTRACT.md` |
+| May this refresh rebuild or block readers? | `PUBLICATION_REFRESH_RECOVERY.md` |
+| May this query, selector, or projection exist? | `QUERY_EVIDENCE_PROJECTION_CONTRACTS.md` |
+| How should an installed agent set up and call the kernel? | `AGENT_SETUP_AND_MCP_EXPERIENCE.md` |
+| What proves the implementation? | `QUALIFICATION_PLAN.md` |
+| What happens next, and what may run in parallel? | `REMAINING_EXECUTION_PLAN.md`, constrained by `AGENT_FIRST_CLEAN_CUTOVER.md` |
+| Where does work get tracked? | `LINEAR_BACKLOG.md`; Linear is intended after maintainer issue creation. |
+
+## Required reading paths
+
+### Implementing a task packet
+
+1. Open the Ready child task from `REMAINING_EXECUTION_PLAN.md`, confirm its
+   exact dependencies and ownership lock, then read its controlling documents.
+2. Read the relevant question IDs and logical entities.
+3. Read the publication/query/adapter contract that owns the touched boundary.
+4. Read the qualification cases and budgets before writing code.
+5. Consult archived spike evidence only for the exact oracle or lesson named by
+   the packet.
+6. For every upstream artifact consumed as truth, run the packet's executable
+   seam check against the actual consumer path and independent reference
+   evaluator; a digest or prior completion status is not sufficient.
+
+### Changing a product contract
+
+1. Amend `PRODUCT_DIRECTION.md` if responsibility or non-goals change.
+2. Amend affected question contracts and logical semantics.
+3. Update architecture, qualification, roadmap, packet, and backlog mappings in
+   the same change.
+4. Add or change an executable contract before production implementation.
+
+### Preparing cutover or release
+
+Read the roadmap, publication/recovery protocol, qualification plan, cutover
+packets, and release packet. The roadmap's active runtime-retirement gate
+controls deletion. Consult the spike disposition only for the historical
+inventory and named oracles; it cannot add or waive a cutover condition.
+
+## Historical material
+
+Everything under `docs/archive/` is non-authoritative. The useful archive is:
+
+- `docs/archive/SPIKE_DISPOSITION.md`
+- `docs/archive/SPIKE_PERFORMANCE_EVIDENCE.md`
+- `docs/archive/spike/KERNEL_STABLE_CONTRACT_0_28.md`
+- `docs/archive/spike/ALLOWANCE_EFFICIENCY_FINDINGS.md`
+- `docs/archive/spike/OVERLAY_ADAPTER_CONTRACT_0_28.md`
+
+Git history contains prior roadmaps, review reports, UI plans, and superseded
+proposals. They are intentionally absent from the active tree.
+
+The 0.28 implementation, tests, fixtures, and release tooling remain executable
+oracles until the retirement gate. Their current behavior is not product
+authority unless an active document explicitly adopts it.
+
+## Conflict rule
+
+If two active documents appear inconsistent:
+
+1. product responsibility and non-goals win over implementation convenience;
+2. question and logical contracts win over a physical candidate;
+3. safety and publication invariants win over latency;
+4. the qualification plan decides whether a claim is proven;
+5. stop the affected packet and record a decision amendment rather than
+   silently choosing the spike behavior.
+
+If an already completed packet's artifact fails in a downstream consumer,
+preserve the historical completion record, add a corrective packet to the
+dependency graph, and require linked requalification evidence for every
+affected downstream seam before dependent work resumes.
+
+Archived documents, old branch names, current spike schemas, and historical
+release notes never resolve an active-contract conflict.

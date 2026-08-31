@@ -172,7 +172,11 @@ def test_failed_replacement_promotion_keeps_prior_active_and_recovers(
     _write_usage(replacement, session="active-session", event="after", tokens=20)
     os.replace(replacement, source)
 
-    def fail_promotion(_path: Path, _generation: int) -> None:
+    def fail_promotion(
+        _path: Path,
+        _generation: int,
+        **_kwargs,
+    ) -> None:
         raise RuntimeError("synthetic promotion failure")
 
     monkeypatch.setattr(ingestor, "_promote", fail_promotion)
@@ -228,7 +232,11 @@ def test_interrupted_after_commit_promotes_valid_generation_on_next_refresh(
         _write_usage(extra, session="active-session", event="after", tokens=20)
         handle.write(extra.read_text(encoding="utf-8").splitlines()[-1] + "\n")
 
-    monkeypatch.setattr(ingestor, "_promote", lambda _path, _generation: None)
+    monkeypatch.setattr(
+        ingestor,
+        "_promote",
+        lambda _path, _generation, **_kwargs: None,
+    )
     interrupted = ingestor.refresh(
         [source],
         trigger=RefreshTrigger.CLI_REFRESH,
@@ -368,6 +376,51 @@ def test_late_active_duplicate_uses_isolated_canonical_promotion(
             """
         ).fetchall()
     assert states == [("active", "canonical"), ("archived", "copied")]
+
+
+def test_index_backfill_rebuilds_rollups_after_late_active_duplicate(
+    tmp_path: Path,
+) -> None:
+    archived = tmp_path / "archived_sessions" / "rollout-copy.jsonl"
+    active = tmp_path / "sessions" / "rollout-active.jsonl"
+    _write_usage(archived, session="copy-session", event="shared", tokens=10)
+    paths = kernel_paths(tmp_path / "cache")
+    ingestor = KernelIngestor(paths.analytical, paths.operational)
+    ingestor.refresh(
+        [archived],
+        trigger=RefreshTrigger.CLI_REFRESH,
+        owner_id="owner-1",
+    )
+    before = load_cutover_control(paths.operational)
+    assert before.active_kernel_path is not None
+    with sqlite3.connect(before.active_kernel_path) as connection:
+        connection.execute("DROP INDEX idx_tool_calls_turn")
+
+    _write_usage(active, session="active-session", event="shared", tokens=10)
+    ingestor.refresh(
+        [archived, active],
+        trigger=RefreshTrigger.CLI_REFRESH,
+        owner_id="owner-2",
+    )
+
+    after = load_cutover_control(paths.operational)
+    assert after.active_kernel_path is not None
+    with sqlite3.connect(after.active_kernel_path) as connection:
+        exact = connection.execute(
+            """
+            SELECT COUNT(*), SUM(input_tokens)
+            FROM model_call_facts
+            WHERE duplicate_state = 'canonical'
+            """
+        ).fetchone()
+        persisted = connection.execute(
+            """
+            SELECT calls, input_tokens
+            FROM rollup_global
+            WHERE generation = 2
+            """
+        ).fetchone()
+    assert persisted == exact == (1, 10)
 
 
 def _write_usage(

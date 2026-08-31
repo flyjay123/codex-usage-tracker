@@ -34,8 +34,8 @@ except ModuleNotFoundError:  # pragma: no cover - direct script execution
     from generate_kernel_manifests import manifest_failures
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-_VERSION = "0.27.0"
-_PLUGIN_VERSION = "0.27.0"
+_VERSION = "0.28.0"
+_PLUGIN_VERSION = "0.28.0"
 _K1_MERGE = "d8da9bccdb6674e7dca4c0872c36a1346949dc13"
 _FROZEN_RELEASE_PATHS = (
     "scripts/release_quality.py",
@@ -143,12 +143,13 @@ def _distribution_failures(dist_dir: Path) -> list[str]:
     expected_wheel_names.update(
         path.relative_to(_REPO_ROOT / "src").as_posix()
         for root in (
+            _REPO_ROOT / "src" / "codex_usage_tracker" / "agent_kernel",
             _REPO_ROOT / "src" / "codex_usage_tracker" / "kernel",
             _REPO_ROOT / "src" / "codex_usage_tracker" / "release",
         )
         for path in root.rglob("*")
         if path.is_file()
-        and path.suffix in {".py", ".json", ".css", ".html", ".js"}
+        and path.suffix in {".py", ".sql", ".json", ".css", ".html", ".js"}
     )
     if wheel_names != expected_wheel_names:
         failures.append(
@@ -248,6 +249,10 @@ def _expected_sdist_names() -> set[str]:
         path.relative_to(_REPO_ROOT).as_posix()
         for root, patterns in (
             (_REPO_ROOT / "config", ("kernel-*.json",)),
+            (
+                _REPO_ROOT / "docs" / "decisions" / "evidence",
+                ("kernel-release-candidate-package-budget-supersession.json",),
+            ),
             (_REPO_ROOT / "docs", ("**/*.md",)),
             (_REPO_ROOT / "scripts", (
                 "benchmark_kernel.py",
@@ -263,10 +268,20 @@ def _expected_sdist_names() -> set[str]:
             )),
             (_REPO_ROOT / "frontend" / "kernel-console", ("*",)),
             (
+                _REPO_ROOT / "src" / "codex_usage_tracker" / "agent_kernel",
+                ("**/*.py", "**/*.sql"),
+            ),
+            (
                 _REPO_ROOT / "src" / "codex_usage_tracker" / "kernel",
                 ("**/*.py", "**/*.json", "**/*.css", "**/*.html", "**/*.js"),
             ),
             (_REPO_ROOT / "src" / "codex_usage_tracker" / "release", ("*.py",)),
+            (_REPO_ROOT / "tests" / "agent_kernel" / "storage", ("**/*.py",)),
+            (
+                _REPO_ROOT / "tests" / "agent_kernel" / "contracts" / "vectors",
+                ("identity-v1.json",),
+            ),
+            (_REPO_ROOT / "tests" / "agent_kernel" / "fixtures" / "tiny-v1", ("*.json",)),
             (_REPO_ROOT / "tests" / "kernel", ("**/*.py", "**/*.json", "**/*.jsonl")),
             (_REPO_ROOT / "tests" / "frontend", ("*.mjs",)),
             (_REPO_ROOT / "tests" / "e2e", ("*.mjs",)),
