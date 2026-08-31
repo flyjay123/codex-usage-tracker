@@ -236,8 +236,11 @@ async function request(path, options = {}) {
 
 function parseRoute() {
   const route = routeFromPath(location.pathname);
-  state.route = route.area;
-  state.selector = route.selector;
+  state.route = route.area === "live" || route.area === "explore" ? route.area : "live";
+  state.selector = state.route === "explore" ? "" : route.selector;
+  if (state.route === "live" && location.pathname !== "/live") {
+    history.replaceState({}, "", "/live");
+  }
 }
 
 function setCurrentNavigation() {
@@ -977,6 +980,84 @@ function allowanceChart(rows) {
 
 async function renderExplore() {
   workspace.replaceChildren(heading("explore"));
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startInput = inputField("开始日期", "simple-start", dateTimeValue(startOfMonth).slice(0, 10), "date");
+  const endInput = inputField("结束日期", "simple-end", dateTimeValue(now).slice(0, 10), "date");
+  const modelInput = inputField("模型（可选）", "simple-model", "", "text");
+  const projectInput = inputField("项目（可选）", "simple-project", "", "text");
+  const threadInput = inputField("会话（可选）", "simple-thread", "", "text");
+  const orderSelect = selectField("排序", "simple-order", ["total_tokens", "calls"], "total_tokens");
+  orderSelect.control.options[0].textContent = "总 Token 从高到低";
+  orderSelect.control.options[1].textContent = "调用次数从高到低";
+  const limitSelect = selectField("显示条数", "simple-limit", ["25", "50", "100"], "25");
+  const form = element("form", { className: "card form-grid simple-query-form", id: "simple-query-form", "aria-label": "用量筛选" }, [
+    element("p", { className: "form-note", text: "按时间和关键词筛选 Codex 调用。留空可忽略对应条件。" }),
+    startInput.wrapper, endInput.wrapper, modelInput.wrapper,
+    projectInput.wrapper, threadInput.wrapper, orderSelect.wrapper, limitSelect.wrapper,
+    element("div", { className: "form-actions" }, [
+      element("button", { className: "button primary", type: "submit", text: "查询" }),
+      element("button", { className: "button ghost", type: "button", text: "清空筛选", id: "simple-reset" }),
+    ]),
+  ]);
+  const output = element("section", { className: "card", style: "margin-top:1rem" }, [
+    element("div", { className: "loading", text: "正在加载…" }),
+  ]);
+  workspace.append(form, output);
+  const run = async (event) => {
+    event?.preventDefault();
+    if (!startInput.control.value || !endInput.control.value) {
+      output.replaceChildren(element("p", { className: "month-empty", text: "请填写开始和结束日期。" }));
+      return;
+    }
+    const start = new Date(startInput.control.value + "T00:00:00");
+    const selectedEnd = new Date(endInput.control.value + "T00:00:00");
+    if (Number.isNaN(start.getTime()) || Number.isNaN(selectedEnd.getTime()) || selectedEnd < start) {
+      output.replaceChildren(element("p", { className: "month-empty", text: "结束日期不能早于开始日期。" }));
+      return;
+    }
+    const end = new Date(selectedEnd.getTime() + 86_400_000);
+    const filters = [
+      { field: "event_at", operator: "gte", value: start.toISOString() },
+      { field: "event_at", operator: "lt", value: end.toISOString() },
+    ];
+    for (const [field, control] of [["model", modelInput.control], ["project", projectInput.control], ["thread", threadInput.control]]) {
+      if (control.value.trim()) filters.push({ field, operator: "eq", value: control.value.trim() });
+    }
+    output.replaceChildren(element("div", { className: "loading", text: "正在查询…" }));
+    try {
+      const response = await request("/query", {
+        method: "POST",
+        body: JSON.stringify({ requests: [{
+          dataset: "calls",
+          operation: "aggregate",
+          dimensions: ["model", "project", "thread"],
+          measures: ["calls", "input_tokens", "cached_input_tokens", "uncached_input_tokens", "output_tokens", "reasoning_tokens", "total_tokens"],
+          filters,
+          order_by: orderSelect.control.value,
+          descending: true,
+          limit: Number(limitSelect.control.value),
+        }] }),
+      });
+      output.replaceChildren(queryResultPanel(response.results[0], "筛选结果"));
+    } catch (error) {
+      output.replaceChildren(errorPanel(error, () => run()));
+    }
+  };
+  form.addEventListener("submit", run);
+  form.querySelector("#simple-reset").addEventListener("click", () => {
+    modelInput.control.value = "";
+    projectInput.control.value = "";
+    threadInput.control.value = "";
+    startInput.control.value = dateTimeValue(startOfMonth).slice(0, 10);
+    endInput.control.value = dateTimeValue(now).slice(0, 10);
+    run();
+  });
+  await run();
+}
+
+async function renderExploreLegacy() {
+  workspace.replaceChildren(heading("explore"));
   let guidance;
   let initialResults;
   try {
@@ -1254,9 +1335,9 @@ function queryResultPanel(result, title = null) {
     element("h3", { text: title || `${result.dataset} · ${result.operation}` }),
     element("div", {
       className: "result-meta",
-      text: `Generation ${result.generation} · ${result.returned_count} of ${result.matched_count} rows · ${formatNumber(result.elapsed_ms)} ms · ${result.grade}${pricingCoverage ? ` · ${pricingCoverage}` : ""}`,
+      text: `共 ${result.returned_count} 条 · 查询耗时 ${formatNumber(result.elapsed_ms)} 毫秒 · ${result.grade === "exact" ? "精确统计" : result.grade}`,
     }),
-    tableFor(result.rows, true, {
+    tableFor(result.rows, false, {
       label: title || `${result.dataset} ${result.operation}`,
       compactTokens: true,
       hiddenColumns,
