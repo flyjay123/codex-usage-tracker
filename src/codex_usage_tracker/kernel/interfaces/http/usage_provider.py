@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -43,6 +44,7 @@ class UsageProvider:
         self._cache_seconds = cache_seconds
         self._cached_at = 0.0
         self._cached_payload: dict[str, Any] | None = None
+        self._lock = threading.Lock()
 
     def status(self) -> dict[str, bool]:
         return {"configured": self._read_key() is not None}
@@ -68,6 +70,10 @@ class UsageProvider:
         return {"configured": False}
 
     def fetch(self, *, force: bool = False) -> dict[str, Any]:
+        with self._lock:
+            return self._fetch_locked(force=force)
+
+    def _fetch_locked(self, *, force: bool) -> dict[str, Any]:
         key = self._read_key()
         if key is None:
             return {"configured": False}
