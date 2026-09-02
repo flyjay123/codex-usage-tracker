@@ -116,7 +116,10 @@ class HttpApp:
             try:
                 return _json_response(
                     200,
-                    provider.fetch(force=_query_bool(query, "refresh", False)),
+                    provider.fetch(
+                        key_id=_query_optional(query, "key_id"),
+                        force=_query_bool(query, "refresh", False),
+                    ),
                 )
             except UsageProviderError as exc:
                 return _json_response(502, {"error": str(exc)})
@@ -124,11 +127,17 @@ class HttpApp:
             provider = self._relay_usage_provider()
             payload = _json_body(body)
             if payload.get("clear") is True:
-                return _json_response(200, provider.clear())
+                key_id = payload.get("key_id")
+                if key_id is not None and not isinstance(key_id, str):
+                    raise ValueError("key_id must be a string")
+                return _json_response(200, provider.clear(key_id))
             api_key = payload.get("api_key")
             if not isinstance(api_key, str):
                 raise ValueError("api_key must be a string")
-            return _json_response(200, provider.save(api_key))
+            label = payload.get("label")
+            if label is not None and not isinstance(label, str):
+                raise ValueError("label must be a string")
+            return _json_response(200, provider.save(api_key, label=label))
         job_prefix = f"{API_PREFIX}/jobs/"
         if method == "GET" and path.startswith(job_prefix):
             job_id = path.removeprefix(job_prefix)

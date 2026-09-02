@@ -685,10 +685,18 @@ function renderRelayUsageData(target, payload, cached) {
 
 async function renderRelayUsage() {
   workspace.querySelectorAll(".usage-provider-panel").forEach((node) => node.remove());
+  const keySelect = element("select", { "aria-label": "选择已保存的 API Key" });
+  const keyLabel = element("input", {
+    type: "text",
+    autocomplete: "off",
+    maxlength: "80",
+    placeholder: "密钥名称（可选，如：个人账号）",
+    "aria-label": "密钥名称",
+  });
   const apiKey = element("input", {
     type: "password",
     autocomplete: "new-password",
-    placeholder: "输入中转站 API Key",
+    placeholder: "输入新的中转站 API Key",
     "aria-label": "中转站 API Key",
   });
   const result = element("div", { className: "provider-result" });
@@ -702,16 +710,40 @@ async function renderRelayUsage() {
         element("p", { className: "month-hint", text: "密钥仅保存在本机 Usage Tracker 配置中。查询结果缓存 5 分钟。" }),
       ]),
     ]),
-    element("div", { className: "provider-controls" }, [apiKey, saveButton, refreshButton, clearButton]),
+    element("div", { className: "provider-saved-row" }, [
+      element("label", { text: "已保存密钥" }),
+      keySelect,
+      refreshButton,
+      clearButton,
+    ]),
+    element("div", { className: "provider-new-row" }, [keyLabel, apiKey, saveButton]),
     result,
   ]);
   workspace.append(panel);
+
+  const updateKeySelect = (keys, selectedId) => {
+    const entries = Array.isArray(keys) ? keys : [];
+    keySelect.replaceChildren(
+      ...entries.map((key) => element("option", { value: key.id, text: key.label })),
+    );
+    if (!entries.length) {
+      keySelect.append(element("option", { value: "", text: "暂无已保存密钥" }));
+    }
+    keySelect.value = selectedId || entries[0]?.id || "";
+    keySelect.disabled = !entries.length;
+    refreshButton.disabled = !entries.length;
+    clearButton.disabled = !entries.length;
+  };
+
   const load = async (force = false) => {
     result.replaceChildren(element("div", { className: "loading", text: "正在读取中转站用量…" }));
     try {
-      const response = await request(`/usage-provider${force ? "?refresh=1" : ""}`);
-      refreshButton.disabled = !response.configured;
-      clearButton.disabled = !response.configured;
+      const params = new URLSearchParams();
+      if (keySelect.value) params.set("key_id", keySelect.value);
+      if (force) params.set("refresh", "1");
+      const query = params.size ? `?${params}` : "";
+      const response = await request(`/usage-provider${query}`);
+      updateKeySelect(response.keys, response.selected_id);
       if (!response.configured) {
         result.replaceChildren(element("p", { className: "month-empty", text: "保存 API Key 后即可查看中转站用量。" }));
         return;
@@ -728,8 +760,13 @@ async function renderRelayUsage() {
     }
     saveButton.disabled = true;
     try {
-      await request("/usage-provider/config", { method: "POST", body: JSON.stringify({ api_key: apiKey.value.trim() }) });
+      const saved = await request("/usage-provider/config", {
+        method: "POST",
+        body: JSON.stringify({ api_key: apiKey.value.trim(), label: keyLabel.value.trim() }),
+      });
+      updateKeySelect(saved.keys, saved.selected_id);
       apiKey.value = "";
+      keyLabel.value = "";
       await load(true);
     } catch (error) {
       result.replaceChildren(errorPanel(error));
@@ -737,10 +774,23 @@ async function renderRelayUsage() {
       saveButton.disabled = false;
     }
   });
+  keySelect.addEventListener("change", () => load());
   refreshButton.addEventListener("click", () => load(true));
   clearButton.addEventListener("click", async () => {
-    await request("/usage-provider/config", { method: "POST", body: JSON.stringify({ clear: true }) });
-    await load();
+    if (!keySelect.value) return;
+    clearButton.disabled = true;
+    try {
+      const cleared = await request("/usage-provider/config", {
+        method: "POST",
+        body: JSON.stringify({ clear: true, key_id: keySelect.value }),
+      });
+      updateKeySelect(cleared.keys, cleared.selected_id);
+      await load();
+    } catch (error) {
+      result.replaceChildren(errorPanel(error));
+    } finally {
+      clearButton.disabled = !keySelect.value;
+    }
   });
   await load();
 }

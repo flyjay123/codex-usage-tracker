@@ -301,17 +301,24 @@ input, select {
 .monthly-panel { margin-bottom: 1rem; }
 .usage-provider-panel { margin-top: 1rem; }
 .provider-heading h2 { margin: 0 0 .35rem; }
-.provider-controls {
-  align-items: end;
+.provider-saved-row,
+.provider-new-row {
+  align-items: center;
   display: grid;
   gap: .65rem;
-  grid-template-columns: minmax(220px, 1fr) auto auto auto;
-  margin: 1rem 0;
+  margin-top: 1rem;
 }
+.provider-saved-row { grid-template-columns: auto minmax(220px, 1fr) auto auto; }
+.provider-new-row { grid-template-columns: minmax(180px, .65fr) minmax(260px, 1fr) auto; }
+.provider-saved-row label { color: var(--muted); font-weight: 700; }
+.provider-saved-row select,
+.provider-new-row input { min-height: 2.6rem; width: 100%; }
 .provider-result h3 { margin: 1.2rem 0 .6rem; }
 @media (max-width: 760px) {
-  .provider-controls { grid-template-columns: 1fr 1fr; }
-  .provider-controls input { grid-column: 1 / -1; }
+  .provider-saved-row { grid-template-columns: 1fr 1fr; }
+  .provider-saved-row label,
+  .provider-saved-row select { grid-column: 1 / -1; }
+  .provider-new-row { grid-template-columns: 1fr; }
 }
 .month-toolbar { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
 .month-toolbar label { font-weight: 700; color: #17324d; }
