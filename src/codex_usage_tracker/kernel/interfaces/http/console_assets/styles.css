@@ -187,6 +187,12 @@ td.numeric, th.numeric { font-variant-numeric: tabular-nums; text-align: right; 
   text-transform: inherit;
   white-space: nowrap;
 }
+th.numeric .sort-button {
+  padding-left: 1rem;
+  padding-right: 0;
+  text-align: right;
+  width: 100%;
+}
 .sort-button[aria-sort="ascending"]::after { content: " ↑"; }
 .sort-button[aria-sort="descending"]::after { content: " ↓"; }
 .table-pager {

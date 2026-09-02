@@ -323,6 +323,9 @@ function tableFor(rows, includeEvidence = false, options = {}) {
       discoveredColumns.filter((column) => !preferredColumns.includes(column)),
     ),
   ];
+  const numericColumns = new Set(
+    columns.filter((column) => rows.some((row) => typeof row[column] === "number")),
+  );
   const rowSelectors = rows.map(evidenceSelectorForRow);
   const hasEvidence = includeEvidence && rowSelectors.some(Boolean);
   const hasDetails = technicalColumns.size > 0;
@@ -371,7 +374,10 @@ function tableFor(rows, includeEvidence = false, options = {}) {
       text: label,
       "aria-label": label,
     });
-    const header = element("th", { scope: "col" }, [button]);
+    const header = element("th", {
+      className: numericColumns.has(column) ? "numeric" : "",
+      scope: "col",
+    }, [button]);
     button.addEventListener("click", () => {
       if (sortColumn === column) {
         sortDirection = sortDirection === "ascending" ? "descending" : "ascending";
