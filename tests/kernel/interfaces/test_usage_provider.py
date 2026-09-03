@@ -168,4 +168,7 @@ def test_usage_provider_compares_total_and_date_filtered_usage(tmp_path: Path) -
         (200, 2.0),
         (400, 4.0),
     ]
+    assert september["rows"][0]["daily_usage"] == [
+        {"date": "2026-09-01", "total_tokens": 200, "total_cost": 2.0}
+    ]
     assert all(row["error"] is None for row in totals["rows"])

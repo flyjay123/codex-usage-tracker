@@ -1,7 +1,5 @@
 import {
   allowancePresentation,
-  boundedPercent,
-  cacheReuse,
   commaSeparated,
   evidenceSelectorForRow,
   humanColumnLabel,
@@ -622,7 +620,7 @@ async function renderRelayUsage() {
       request,
       usageCard,
     });
-    panel.after(comparisonPanel);
+    result.before(comparisonPanel);
   };
 
   const load = async (force = false) => {
@@ -1550,11 +1548,11 @@ function connectLive() {
   source.addEventListener("generation_committed", async (event) => {
     const payload = JSON.parse(event.data);
     const key = publicationKey(payload);
-    if (state.seenPublications.has(key)) return;
+    if (Number(payload.generation) <= Number(state.status?.generation) || state.seenPublications.has(key)) return;
     state.seenPublications.add(key);
     await refreshStatus();
     await renderCurrentRoute();
-    toast(`Generation ${payload.generation} is ready.`);
+    toast(`第 ${payload.generation} 代数据已就绪。`);
   });
   source.addEventListener("snapshot_required", async () => {
     if (state.eventSource !== source) return;

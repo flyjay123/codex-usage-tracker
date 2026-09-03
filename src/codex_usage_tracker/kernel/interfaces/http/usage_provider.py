@@ -114,6 +114,9 @@ class UsageProvider:
                 entry = entries[key_id]
                 try:
                     response = self._fetch_locked(key_id=key_id, force=force)
+                    daily_usage = _usage_daily(
+                        response.get("usage", {}), date_from=date_from, date_to=date_to
+                    )
                     total_tokens, total_cost = _usage_totals(
                         response.get("usage", {}), date_from=date_from, date_to=date_to
                     )
@@ -123,6 +126,7 @@ class UsageProvider:
                             "label": entry["label"],
                             "total_tokens": total_tokens,
                             "total_cost": total_cost,
+                            "daily_usage": daily_usage,
                             "error": None,
                         }
                     )
@@ -133,6 +137,7 @@ class UsageProvider:
                             "label": entry["label"],
                             "total_tokens": 0,
                             "total_cost": 0,
+                            "daily_usage": [],
                             "error": str(exc),
                         }
                     )
@@ -257,19 +262,10 @@ def _usage_totals(
     if not isinstance(payload, dict):
         return 0, 0.0
     if date_from or date_to:
-        daily = payload.get("daily_usage")
-        rows = daily if isinstance(daily, list) else []
-        filtered = [
-            row
-            for row in rows
-            if isinstance(row, dict)
-            and isinstance(row.get("date"), str)
-            and (not date_from or row["date"] >= date_from)
-            and (not date_to or row["date"] <= date_to)
-        ]
+        filtered = _usage_daily(payload, date_from=date_from, date_to=date_to)
         return (
             sum(_integer(row.get("total_tokens")) for row in filtered),
-            sum(_number(row.get("actual_cost", row.get("cost"))) for row in filtered),
+            sum(_number(row.get("total_cost")) for row in filtered),
         )
     usage = payload.get("usage")
     total = usage.get("total") if isinstance(usage, dict) else None
@@ -287,6 +283,27 @@ def _usage_totals(
             if isinstance(row, dict)
         ),
     )
+
+
+def _usage_daily(
+    payload: object, *, date_from: str | None, date_to: str | None
+) -> list[dict[str, Any]]:
+    if not isinstance(payload, dict):
+        return []
+    daily = payload.get("daily_usage")
+    rows = daily if isinstance(daily, list) else []
+    return [
+        {
+            "date": row["date"],
+            "total_tokens": _integer(row.get("total_tokens")),
+            "total_cost": _number(row.get("actual_cost", row.get("cost"))),
+        }
+        for row in rows
+        if isinstance(row, dict)
+        and isinstance(row.get("date"), str)
+        and (not date_from or row["date"] >= date_from)
+        and (not date_to or row["date"] <= date_to)
+    ]
 
 
 def _number(value: object) -> float:
