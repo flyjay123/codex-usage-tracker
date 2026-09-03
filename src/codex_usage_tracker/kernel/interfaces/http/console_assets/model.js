@@ -1,4 +1,4 @@
-export const CONSOLE_AREAS = Object.freeze(["live", "explore", "evidence", "limits", "settings"]);
+export const CONSOLE_AREAS = Object.freeze(["live", "compare", "explore", "evidence", "limits", "settings"]);
 
 export function materializeTemplate(template, parameters = {}) {
   if (!template || !Array.isArray(template.requests)) {

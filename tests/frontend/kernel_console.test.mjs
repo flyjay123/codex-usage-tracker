@@ -18,6 +18,7 @@ import {
 
 test("only approved console routes resolve", () => {
   assert.deepEqual(routeFromPath("/live"), { area: "live", selector: "" });
+  assert.deepEqual(routeFromPath("/compare"), { area: "compare", selector: "" });
   assert.deepEqual(routeFromPath("/insights"), { area: "live", selector: "" });
   assert.deepEqual(routeFromPath("/evidence/thread%3Asynthetic"), {
     area: "evidence",

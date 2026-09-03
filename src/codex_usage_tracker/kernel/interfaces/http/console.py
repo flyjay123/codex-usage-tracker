@@ -8,7 +8,7 @@ from urllib.parse import unquote, urlsplit
 
 from .app import HttpResponse
 
-CONSOLE_AREAS = ("live", "explore", "evidence", "limits", "settings")
+CONSOLE_AREAS = ("live", "compare", "explore", "evidence", "limits", "settings")
 _CONTENT_TYPES = {
     "app.js": "text/javascript; charset=utf-8",
     "comparison.js": "text/javascript; charset=utf-8",

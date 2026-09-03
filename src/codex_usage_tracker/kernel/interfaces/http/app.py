@@ -114,6 +114,8 @@ class HttpApp:
             )
         if method == "GET" and path == f"{API_PREFIX}/usage-provider":
             provider = self._relay_usage_provider()
+            if _query_bool(query, "config", False):
+                return _json_response(200, provider.status())
             try:
                 return _json_response(
                     200,

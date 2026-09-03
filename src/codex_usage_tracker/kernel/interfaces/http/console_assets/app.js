@@ -58,6 +58,11 @@ const COPY = Object.freeze({
     title: "Codex 用量",
     description: "选择月份，直接查看 Token 总量和明细。",
   },
+  compare: {
+    eyebrow: "中转站用量",
+    title: "账号对比",
+    description: "选择时间范围和账号，在一张图中比较每日 Token 或花费。",
+  },
   explore: {
     eyebrow: "高级查询",
     title: "详细数据探索",
@@ -235,7 +240,7 @@ async function request(path, options = {}) {
 
 function parseRoute() {
   const route = routeFromPath(location.pathname);
-  state.route = route.area === "live" || route.area === "explore" ? route.area : "live";
+  state.route = ["live", "compare", "explore"].includes(route.area) ? route.area : "live";
   state.selector = state.route === "explore" ? "" : route.selector;
   if (state.route === "live" && location.pathname !== "/live") {
     history.replaceState({}, "", "/live");
@@ -598,8 +603,6 @@ async function renderRelayUsage() {
     result,
   ]);
   workspace.append(panel);
-  let comparisonPanel = null;
-
   const updateKeySelect = (keys, selectedId) => {
     const entries = Array.isArray(keys) ? keys : [];
     keySelect.replaceChildren(
@@ -612,15 +615,6 @@ async function renderRelayUsage() {
     keySelect.disabled = !entries.length;
     refreshButton.disabled = !entries.length;
     clearButton.disabled = !entries.length;
-    comparisonPanel?.remove();
-    comparisonPanel = createRelayComparisonPanel(entries, {
-      element,
-      errorPanel,
-      formatNumber,
-      request,
-      usageCard,
-    });
-    result.before(comparisonPanel);
   };
 
   const load = async (force = false) => {
@@ -730,6 +724,23 @@ async function renderMonthlyUsage() {
   panel.querySelector("#month-run").addEventListener("click", run);
   await run();
   await renderRelayUsage();
+}
+
+async function renderComparison() {
+  workspace.replaceChildren(heading("compare"));
+  const target = element("div", { className: "loading", text: "正在读取账号…" });
+  workspace.append(target);
+  try {
+    const config = await request("/usage-provider?config=1");
+    target.replaceWith(createRelayComparisonPanel(config.keys || [], {
+      element,
+      errorPanel,
+      formatNumber,
+      request,
+    }));
+  } catch (error) {
+    target.replaceWith(errorPanel(error, renderComparison));
+  }
 }
 
 function timePosition(timestamp, minimum, maximum, start, end) {
@@ -1444,37 +1455,6 @@ async function renderLimits() {
   }
 }
 
-function renderSettings() {
-  workspace.replaceChildren(
-    heading("settings"),
-    element("section", { className: "card" }, [
-      element("h2", { text: "Runtime" }),
-      definitionList({
-        Version: state.status?.version || "—",
-        "Cache state": state.status?.state || "absent",
-        Generation: state.status?.generation ?? "none",
-        Publication: state.status?.publication_id || "none",
-        "Active refresh": state.status?.refresh ? `${state.status.refresh.stage} · ${state.status.refresh.progress_percent}%` : "none",
-        Watcher: localStorage.getItem("kernel-live-enabled") === "false" ? "paused in this browser" : "watching committed generations",
-        "Rate card": state.status?.rate_card?.configured
-          ? `${state.status.rate_card.source?.name || "configured"} · effective ${state.status.rate_card.source?.effective_at || "unknown"}`
-          : `${state.status?.rate_card?.status || "absent"} · no estimates shown`,
-        Rollback: "available through the operational CLI",
-        "Optional content indexing": "off · foundational facts only",
-      }),
-    ]),
-    element("section", { className: "card", style: "margin-top:1rem" }, [
-      element("h2", { text: "Browser behavior" }),
-      toggleRow(),
-      element("p", { className: "callout", text: "Refresh is explicit. Opening or reopening this console only reads the last committed snapshot; it never rebuilds the database." }),
-    ]),
-    element("section", { className: "card", style: "margin-top:1rem" }, [
-      element("h2", { text: "Privacy boundary" }),
-      element("p", { text: "The console reads normalized local facts from the loopback kernel API. Prompts, reasoning text, raw tool arguments, raw tool output, shell bodies, secrets, and full source paths are not part of this product surface." }),
-    ]),
-  );
-}
-
 function definitionList(values) {
   const list = element("dl", { className: "definition-list" });
   Object.entries(values).forEach(([term, value]) => list.append(element("div", {}, [
@@ -1484,28 +1464,13 @@ function definitionList(values) {
   return list;
 }
 
-function toggleRow() {
-  const enabled = localStorage.getItem("kernel-live-enabled") !== "false";
-  const checkbox = element("input", { type: "checkbox", id: "live-toggle", ...(enabled ? { checked: "" } : {}) });
-  checkbox.addEventListener("change", () => {
-    localStorage.setItem("kernel-live-enabled", String(checkbox.checked));
-    connectLive();
-  });
-  return element("label", { for: "live-toggle" }, [
-    element("span", { text: "Watch for committed generations" }),
-    checkbox,
-  ]);
-}
-
 async function renderCurrentRoute() {
   setCurrentNavigation();
   sidebar.classList.remove("open");
   menuToggle.setAttribute("aria-expanded", "false");
   if (state.route === "live") await renderLive();
-  else if (state.route === "explore") await renderExplore();
-  else if (state.route === "evidence") await renderEvidence();
-  else if (state.route === "limits") await renderLimits();
-  else renderSettings();
+  else if (state.route === "compare") await renderComparison();
+  else await renderExplore();
 }
 
 async function refreshStatus() {

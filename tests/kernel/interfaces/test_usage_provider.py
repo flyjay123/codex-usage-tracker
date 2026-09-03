@@ -111,13 +111,20 @@ def test_http_usage_routes_select_key_without_exposing_credentials(tmp_path: Pat
         f"{API_PREFIX}/usage-provider?key_id={key_id}",
         headers={"Host": "127.0.0.1:8765"},
     )
+    config_only = adapter.handle(
+        "GET",
+        f"{API_PREFIX}/usage-provider?config=1",
+        headers={"Host": "127.0.0.1:8765"},
+    )
 
     saved_payload = json.loads(saved.body)
     fetched_payload = json.loads(fetched.body)
+    config_payload = json.loads(config_only.body)
     assert saved_payload["selected_id"] == key_id
     assert saved_payload["keys"] == [{"id": key_id, "label": "test account"}]
     assert fetched_payload["usage"] == {"usage": 7}
     assert fetched_payload["selected_id"] == key_id
+    assert config_payload == saved_payload
     assert b"test-key" not in saved.body
     assert b"test-key" not in fetched.body
 

@@ -37,7 +37,7 @@ for (const required of [
 ]) {
   if (!contents["index.html"].includes(required)) failures.push(`missing accessibility contract: ${required}`);
 }
-for (const route of ["live", "explore"]) {
+for (const route of ["live", "compare", "explore"]) {
   if (!contents["index.html"].includes(`href="/${route}"`)) failures.push(`missing approved route ${route}`);
 }
 for (const retired of ["insights", "reports", "diagnostics", "compression-lab"]) {

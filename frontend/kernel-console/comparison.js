@@ -1,134 +1,155 @@
-const SERIES_COLORS = ["#2563eb", "#0f9f75", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#be185d", "#4d7c0f"];
+const COLORS = ["#2563eb", "#0f9f75", "#d97706", "#dc2626", "#7c3aed", "#0891b2", "#be185d", "#4d7c0f"];
 
-function barChart(title, rows, field, formatter, element) {
-  const maximum = Math.max(...rows.map((row) => Number(row[field]) || 0), 1);
-  return element("section", { className: "comparison-chart" }, [
-    element("h3", { text: title }),
-    ...rows.map((row) => {
-      const value = Number(row[field]) || 0;
-      return element("div", { className: "comparison-bar-row" }, [
-        element("span", { className: "comparison-name", text: row.label }),
-        element("div", { className: "comparison-track" }, [
-          element("div", {
-            className: `comparison-fill ${field === "total_cost" ? "cost" : "tokens"}`,
-            style: `width:${Math.max(value > 0 ? 2 : 0, (value / maximum) * 100)}%`,
-          }),
-        ]),
-        element("strong", { className: "comparison-value", text: formatter(value) }),
-      ]);
-    }),
-  ]);
+function localDate(date) {
+  const offset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 10);
 }
 
-function dailyChart(rows, element, formatNumber) {
+function svgElement(tag, attributes = {}) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, String(value)));
+  return node;
+}
+
+function lineChart(rows, field, container, formatNumber) {
+  const dates = [...new Set(rows.flatMap((row) => row.daily_usage.map((day) => day.date)))].sort();
+  const width = Math.max(container.clientWidth, 320);
+  const height = width < 560 ? 330 : 390;
+  const margin = { top: 18, right: 18, bottom: 48, left: width < 560 ? 58 : 76 };
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+  const values = rows.flatMap((row) => row.daily_usage.map((day) => Number(day[field]) || 0));
+  const maximum = Math.max(...values, 1);
+  const x = (index) => dates.length === 1 ? margin.left + innerWidth / 2 : margin.left + index * innerWidth / (dates.length - 1);
+  const y = (value) => margin.top + innerHeight - value / maximum * innerHeight;
+  const svg = svgElement("svg", { class: "comparison-line-chart", viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": field === "total_cost" ? "每日花费对比折线图" : "每日 Token 对比折线图" });
+  for (let index = 0; index <= 4; index += 1) {
+    const value = maximum * index / 4;
+    const position = y(value);
+    svg.append(svgElement("line", { class: "comparison-grid", x1: margin.left, x2: width - margin.right, y1: position, y2: position }));
+    const label = svgElement("text", { class: "comparison-axis", x: margin.left - 10, y: position + 4, "text-anchor": "end" });
+    label.textContent = field === "total_cost" ? value.toFixed(1) : formatNumber(value);
+    svg.append(label);
+  }
+  const tickEvery = Math.max(1, Math.ceil(dates.length / (width < 560 ? 4 : 7)));
+  dates.forEach((date, index) => {
+    if (index % tickEvery && index !== dates.length - 1) return;
+    const label = svgElement("text", { class: "comparison-axis", x: x(index), y: height - 16, "text-anchor": index === 0 ? "start" : index === dates.length - 1 ? "end" : "middle" });
+    label.textContent = date.slice(5);
+    svg.append(label);
+  });
+  rows.forEach((row, rowIndex) => {
+    const byDate = new Map(row.daily_usage.map((day) => [day.date, Number(day[field]) || 0]));
+    const points = dates.map((date, index) => [x(index), y(byDate.get(date) || 0), date, byDate.get(date) || 0]);
+    svg.append(svgElement("polyline", { class: "comparison-series", points: points.map(([px, py]) => `${px},${py}`).join(" "), stroke: COLORS[rowIndex % COLORS.length] }));
+    points.forEach(([px, py, date, value]) => {
+      const point = svgElement("circle", { class: "comparison-point", cx: px, cy: py, r: 4, fill: COLORS[rowIndex % COLORS.length] });
+      const title = svgElement("title");
+      title.textContent = `${date} · ${row.label} · ${field === "total_cost" ? `${Number(value).toFixed(2)} USD` : formatNumber(value)}`;
+      point.append(title);
+      svg.append(point);
+    });
+  });
+  container.replaceChildren(svg);
+}
+
+function comparisonResult(rows, helpers) {
+  const { element, formatNumber } = helpers;
   let field = "total_tokens";
-  const chart = element("div", { className: "daily-chart" });
+  const plot = element("div", { className: "comparison-plot" });
+  const title = element("h2", { text: "每日 Token 对比" });
+  const total = element("span", { className: "comparison-total" });
   const tokenButton = element("button", { className: "active", type: "button", text: "Token" });
   const costButton = element("button", { type: "button", text: "花费" });
-  const dates = [...new Set(rows.flatMap((row) => row.daily_usage.map((day) => day.date)))].sort();
-  const render = () => {
-    const values = rows.flatMap((row) => row.daily_usage.map((day) => Number(day[field]) || 0));
-    const maximum = Math.max(...values, 1);
-    chart.replaceChildren(...dates.map((date) => element("section", { className: "daily-group" }, [
-      element("h4", { text: date }),
-      ...rows.map((row, index) => {
-        const day = row.daily_usage.find((item) => item.date === date);
-        const value = Number(day?.[field]) || 0;
-        return element("div", { className: "daily-row" }, [
-          element("span", { className: "daily-name", text: row.label }),
-          element("div", { className: "comparison-track" }, [
-            element("div", { className: "daily-fill", style: `width:${Math.max(value > 0 ? 2 : 0, value / maximum * 100)}%;background:${SERIES_COLORS[index % SERIES_COLORS.length]}` }),
-          ]),
-          element("strong", { className: "comparison-value", text: field === "total_cost" ? `${value.toFixed(2)} USD` : formatNumber(value) }),
-        ]);
-      }),
-    ])));
+  const legend = element("div", { className: "comparison-legend" }, rows.map((row, index) => element("span", {}, [
+    element("i", { style: `background:${COLORS[index % COLORS.length]}` }), document.createTextNode(row.label),
+  ])));
+  const draw = () => {
+    title.textContent = field === "total_cost" ? "每日花费对比" : "每日 Token 对比";
+    const sum = rows.reduce((value, row) => value + Number(row[field]), 0);
+    total.textContent = `${rows.length} 个账号 · ${field === "total_cost" ? `${sum.toFixed(2)} USD` : `${formatNumber(sum)} Token`}`;
+    lineChart(rows, field, plot, formatNumber);
   };
-  const selectMetric = (nextField) => {
-    field = nextField;
+  const selectMetric = (next) => {
+    field = next;
     tokenButton.classList.toggle("active", field === "total_tokens");
     costButton.classList.toggle("active", field === "total_cost");
-    render();
+    draw();
   };
   tokenButton.addEventListener("click", () => selectMetric("total_tokens"));
   costButton.addEventListener("click", () => selectMetric("total_cost"));
-  render();
-  return element("section", { className: "daily-section" }, [
-    element("div", { className: "daily-heading" }, [
-      element("h3", { text: "每日趋势" }),
-      element("div", { className: "metric-switch", role: "group", "aria-label": "每日对比指标" }, [tokenButton, costButton]),
-    ]),
-    dates.length ? chart : element("p", { className: "month-empty", text: "所选范围内没有每日数据。" }),
+  requestAnimationFrame(draw);
+  new ResizeObserver(draw).observe(plot);
+  return element("section", { className: "comparison-result" }, [
+    element("div", { className: "comparison-chart-heading" }, [element("div", {}, [title, total]), element("div", { className: "metric-switch", role: "group", "aria-label": "对比指标" }, [tokenButton, costButton])]),
+    legend, plot,
   ]);
 }
 
 export function createRelayComparisonPanel(keys, helpers) {
-  const { element, errorPanel, formatNumber, request, usageCard } = helpers;
-  const search = element("input", { type: "search", placeholder: "输入姓名筛选", "aria-label": "筛选对比账号" });
-  const dateFrom = element("input", { type: "date", "aria-label": "开始日期" });
-  const dateTo = element("input", { type: "date", "aria-label": "结束日期" });
+  const { element, errorPanel, request } = helpers;
+  const now = new Date();
+  const weekAgo = new Date(now);
+  weekAgo.setDate(now.getDate() - 6);
+  const dateFrom = element("input", { type: "date", value: localDate(weekAgo), "aria-label": "开始日期" });
+  const dateTo = element("input", { type: "date", value: localDate(now), "aria-label": "结束日期" });
+  const search = element("input", { type: "search", placeholder: "搜索账号", "aria-label": "搜索账号" });
   const keyList = element("div", { className: "comparison-key-list" });
-  const selectedStatus = element("span", { className: "selection-status" });
-  const result = element("div", { className: "comparison-result" });
-  const compareButton = element("button", { className: "button primary", type: "button", text: "开始对比" });
-  const selectVisible = element("button", { className: "button ghost", type: "button", text: "全选筛选结果" });
-  const clearSelection = element("button", { className: "button ghost", type: "button", text: "清空" });
+  const pickerLabel = element("span", { text: "选择账号" });
+  const notice = element("span", { className: "selection-status", role: "status" });
+  const output = element("div", { className: "comparison-output" }, [element("p", { className: "empty", text: "选择账号后开始对比。" })]);
+  const picker = element("details", { className: "account-picker" });
+  const selected = new Set();
   const checks = keys.map((key) => {
     const checkbox = element("input", { type: "checkbox", value: key.id, "aria-label": `选择 ${key.label}` });
-    const item = element("label", { className: "comparison-key", title: key.label }, [checkbox, element("span", { text: key.label })]);
+    const item = element("label", { className: "comparison-key" }, [checkbox, element("span", { text: key.label })]);
+    checkbox.addEventListener("change", () => {
+      if (checkbox.checked && selected.size >= 8) {
+        checkbox.checked = false;
+        notice.textContent = "一次最多对比 8 个账号。";
+        return;
+      }
+      if (checkbox.checked) selected.add(key.id); else selected.delete(key.id);
+      pickerLabel.textContent = selected.size ? `已选 ${selected.size} 个账号` : "选择账号";
+      notice.textContent = "";
+    });
     keyList.append(item);
-    return { key, checkbox, item };
+    return { key, item };
   });
-  const updateCount = () => { selectedStatus.textContent = `已选 ${checks.filter(({ checkbox }) => checkbox.checked).length} / ${keys.length}`; };
-  checks.forEach(({ checkbox }) => checkbox.addEventListener("change", updateCount));
   search.addEventListener("input", () => {
     const query = search.value.trim().toLocaleLowerCase();
     checks.forEach(({ key, item }) => { item.hidden = Boolean(query) && !key.label.toLocaleLowerCase().includes(query); });
   });
-  selectVisible.addEventListener("click", () => { checks.forEach(({ checkbox, item }) => { if (!item.hidden) checkbox.checked = true; }); updateCount(); });
-  clearSelection.addEventListener("click", () => { checks.forEach(({ checkbox }) => { checkbox.checked = false; }); updateCount(); });
-  updateCount();
+  picker.append(element("summary", {}, [pickerLabel]), element("div", { className: "account-menu" }, [search, keyList]));
+  const compareButton = element("button", { className: "button primary", type: "button", text: "开始对比" });
   compareButton.addEventListener("click", async () => {
-    const keyIds = checks.filter(({ checkbox }) => checkbox.checked).map(({ key }) => key.id);
-    if (!keyIds.length) {
-      result.replaceChildren(element("p", { className: "month-empty", text: "请至少选择一个账号。" }));
+    if (!selected.size) {
+      notice.textContent = "请至少选择一个账号。";
       return;
     }
-    if (dateFrom.value && dateTo.value && dateFrom.value > dateTo.value) {
-      result.replaceChildren(element("p", { className: "month-empty", text: "开始日期不能晚于结束日期。" }));
+    if (dateFrom.value > dateTo.value) {
+      notice.textContent = "开始日期不能晚于结束日期。";
       return;
     }
+    picker.open = false;
+    notice.textContent = "";
     compareButton.disabled = true;
-    result.replaceChildren(element("div", { className: "loading", text: `正在查询 ${keyIds.length} 个账号…` }));
+    output.replaceChildren(element("div", { className: "loading", text: `正在查询 ${selected.size} 个账号…` }));
     try {
-      const response = await request("/usage-provider/compare", {
-        method: "POST",
-        body: JSON.stringify({ key_ids: keyIds, date_from: dateFrom.value, date_to: dateTo.value }),
-      });
-      const rows = (response.rows || []).filter((row) => !row.error).sort((a, b) => b.total_cost - a.total_cost);
+      const response = await request("/usage-provider/compare", { method: "POST", body: JSON.stringify({ key_ids: [...selected], date_from: dateFrom.value, date_to: dateTo.value }) });
+      const rows = (response.rows || []).filter((row) => !row.error && row.daily_usage?.length);
       const failures = (response.rows || []).filter((row) => row.error);
-      result.replaceChildren(
-        element("div", { className: "comparison-summary" }, [
-          usageCard("账号数量", rows.length, "primary"),
-          usageCard("合计 Token", rows.reduce((sum, row) => sum + row.total_tokens, 0)),
-          usageCard("合计花费", `${rows.reduce((sum, row) => sum + row.total_cost, 0).toFixed(2)} USD`),
-        ]),
-        barChart("总消耗对比", rows, "total_tokens", formatNumber, element),
-        barChart("总花费对比", rows, "total_cost", (value) => `${value.toFixed(2)} USD`, element),
-        dailyChart(rows, element, formatNumber),
-        failures.length ? element("p", { className: "comparison-warning", text: `查询失败：${failures.map((row) => row.label).join("、")}` }) : element("span"),
-      );
+      output.replaceChildren(rows.length ? comparisonResult(rows, helpers) : element("p", { className: "empty", text: "所选范围内没有可对比的数据。" }));
+      if (failures.length) output.append(element("p", { className: "comparison-warning", text: `查询失败：${failures.map((row) => row.label).join("、")}` }));
     } catch (error) {
-      result.replaceChildren(errorPanel(error));
+      output.replaceChildren(errorPanel(error));
     } finally {
       compareButton.disabled = false;
     }
   });
-  return element("section", { className: "comparison-panel" }, [
-    element("div", { className: "comparison-heading" }, [element("h2", { text: "账号用量对比" })]),
-    element("div", { className: "comparison-filter-row" }, [search, element("label", {}, [element("span", { text: "开始" }), dateFrom]), element("label", {}, [element("span", { text: "结束" }), dateTo])]),
-    element("div", { className: "selection-toolbar" }, [selectedStatus, selectVisible, clearSelection, compareButton]),
-    keyList,
-    result,
+  if (!keys.length) return element("p", { className: "empty", text: "请先在用量页面保存中转站 API Key。" });
+  return element("section", { className: "comparison-page" }, [
+    element("div", { className: "comparison-filter-row" }, [element("label", {}, [element("span", { text: "开始日期" }), dateFrom]), element("label", {}, [element("span", { text: "结束日期" }), dateTo]), picker, compareButton]),
+    notice, output,
   ]);
 }

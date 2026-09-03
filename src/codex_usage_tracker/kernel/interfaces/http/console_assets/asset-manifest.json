@@ -1,10 +1,10 @@
 {
   "schema": "codex-usage-tracker.kernel-console-assets.v1",
   "assets": {
-    "app.js": "a1c58f07cb2736a38c1dd3ce03e296d6df3c1b59a8801369ba7717c57f07ebe1",
-    "comparison.js": "a3325fef6416e613038086eb9c189c78c827a11adafa3e2479fa731409c12ca1",
-    "index.html": "2cf7421add24c4fd6aadc9bc8118fe3efccfdf45c15ec4d2573a083e63a15de5",
-    "model.js": "403cd222c8d2962240ee06e8ea4e439a9db5412978be9f279643be573180bcb3",
-    "styles.css": "a7e4243ebddb2523be71e1cc055dac3e07541d4c65dfc43292cbbb32b918f84c"
+    "app.js": "d33d6534d321c12314d26e1b4ff578f7620e0ee9b62b356a44b00623c6972d03",
+    "comparison.js": "02cc2b271bf0102362825826480bb1a7110de5aa360c7166ff97f405e7d0895b",
+    "index.html": "7f847b1cffd6f6598c2f4cbf89bfa761635a9d45537d24c5febcd37e807d9aed",
+    "model.js": "dbcaa98ae4ed79b38d1588d37eb7781a1bf3708e2751e2fddcbb0c6f43c2ded1",
+    "styles.css": "e26d2eeb4c2f2ba44de43083b4d94a16cf1b4a916d2a111f8b221f754c4c8294"
   }
 }
