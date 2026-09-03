@@ -11,6 +11,7 @@ from codex_usage_tracker.kernel.interfaces.http.console import (
     ASSET_MANIFEST,
     CONSOLE_AREAS,
     asset_root,
+    console_response,
 )
 
 from ..interfaces.support import active_runtime, synthetic_sources
@@ -86,6 +87,7 @@ def test_console_assets_match_the_committed_deterministic_manifest() -> None:
     root = asset_root()
     assert tuple(sorted(ASSET_MANIFEST)) == (
         "app.js",
+        "comparison.js",
         "index.html",
         "model.js",
         "styles.css",
@@ -97,6 +99,14 @@ def test_console_assets_match_the_committed_deterministic_manifest() -> None:
     manifest = json.loads((root / "asset-manifest.json").read_text(encoding="utf-8"))
     assert manifest["schema"] == "codex-usage-tracker.kernel-console-assets.v1"
     assert manifest["assets"] == ASSET_MANIFEST
+
+
+def test_comparison_module_is_served_as_javascript() -> None:
+    asset = console_response("GET", "/assets/kernel-console/comparison.js")
+
+    assert asset is not None
+    assert asset.status == 200
+    assert asset.content_type == "text/javascript; charset=utf-8"
 
 
 def test_console_shell_contains_no_retired_product_navigation() -> None:

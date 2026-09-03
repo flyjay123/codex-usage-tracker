@@ -9,5 +9,5 @@
     "strict": false,
     "target": "ES2022"
   },
-  "include": ["app.js", "model.js"]
+  "include": ["app.js", "comparison.js", "model.js"]
 }

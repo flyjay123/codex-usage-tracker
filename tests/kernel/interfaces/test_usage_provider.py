@@ -120,3 +120,52 @@ def test_http_usage_routes_select_key_without_exposing_credentials(tmp_path: Pat
     assert fetched_payload["selected_id"] == key_id
     assert b"test-key" not in saved.body
     assert b"test-key" not in fetched.body
+
+
+def test_usage_provider_compares_total_and_date_filtered_usage(tmp_path: Path) -> None:
+    def open_request(request: Request, *, timeout: int) -> _Response:
+        assert timeout == 10
+        multiplier = 1 if request.get_header("Authorization") == "Bearer test-key-one" else 2
+        return _Response(
+            {
+                "usage": {
+                    "total": {
+                        "total_tokens": 300 * multiplier,
+                        "actual_cost": 3.0 * multiplier,
+                    }
+                },
+                "daily_usage": [
+                    {
+                        "date": "2026-08-31",
+                        "total_tokens": 100 * multiplier,
+                        "actual_cost": 1.0 * multiplier,
+                    },
+                    {
+                        "date": "2026-09-01",
+                        "total_tokens": 200 * multiplier,
+                        "actual_cost": 2.0 * multiplier,
+                    },
+                ],
+            }
+        )
+
+    provider = UsageProvider(tmp_path / "nextcode-usage.json", opener=open_request)
+    first_id = _key_id("test-key-one")
+    second_id = _key_id("test-key-two")
+    provider.save("test-key-one", label="账号一")
+    provider.save("test-key-two", label="账号二")
+
+    totals = provider.compare([first_id, second_id])
+    september = provider.compare(
+        [first_id, second_id], date_from="2026-09-01", date_to="2026-09-30"
+    )
+
+    assert [(row["total_tokens"], row["total_cost"]) for row in totals["rows"]] == [
+        (300, 3.0),
+        (600, 6.0),
+    ]
+    assert [(row["total_tokens"], row["total_cost"]) for row in september["rows"]] == [
+        (200, 2.0),
+        (400, 4.0),
+    ]
+    assert all(row["error"] is None for row in totals["rows"])

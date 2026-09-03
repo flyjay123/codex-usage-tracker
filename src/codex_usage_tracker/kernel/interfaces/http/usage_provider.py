@@ -91,6 +91,53 @@ class UsageProvider:
         with self._lock:
             return self._fetch_locked(key_id=key_id, force=force)
 
+    def compare(
+        self,
+        key_ids: list[str],
+        *,
+        date_from: str | None = None,
+        date_to: str | None = None,
+        force: bool = False,
+    ) -> dict[str, Any]:
+        with self._lock:
+            config = self._read_config()
+            entries = {item["id"]: item for item in config["keys"]}
+            selected = list(dict.fromkeys(key_ids))
+            if not selected:
+                raise ValueError("at least one key_id is required")
+            if len(selected) > 100:
+                raise ValueError("too many key_ids")
+            if any(key_id not in entries for key_id in selected):
+                raise ValueError("saved API key was not found")
+            rows = []
+            for key_id in selected:
+                entry = entries[key_id]
+                try:
+                    response = self._fetch_locked(key_id=key_id, force=force)
+                    total_tokens, total_cost = _usage_totals(
+                        response.get("usage", {}), date_from=date_from, date_to=date_to
+                    )
+                    rows.append(
+                        {
+                            "id": key_id,
+                            "label": entry["label"],
+                            "total_tokens": total_tokens,
+                            "total_cost": total_cost,
+                            "error": None,
+                        }
+                    )
+                except UsageProviderError as exc:
+                    rows.append(
+                        {
+                            "id": key_id,
+                            "label": entry["label"],
+                            "total_tokens": 0,
+                            "total_cost": 0,
+                            "error": str(exc),
+                        }
+                    )
+            return {"rows": rows, "date_from": date_from, "date_to": date_to}
+
     def _fetch_locked(self, *, key_id: str | None, force: bool) -> dict[str, Any]:
         config = self._read_config()
         selected_id = key_id or config.get("selected_id")
@@ -202,3 +249,49 @@ def _valid_entry(value: object) -> bool:
         and isinstance(value.get("label"), str)
         and isinstance(value.get("api_key"), str)
     )
+
+
+def _usage_totals(
+    payload: object, *, date_from: str | None, date_to: str | None
+) -> tuple[int, float]:
+    if not isinstance(payload, dict):
+        return 0, 0.0
+    if date_from or date_to:
+        daily = payload.get("daily_usage")
+        rows = daily if isinstance(daily, list) else []
+        filtered = [
+            row
+            for row in rows
+            if isinstance(row, dict)
+            and isinstance(row.get("date"), str)
+            and (not date_from or row["date"] >= date_from)
+            and (not date_to or row["date"] <= date_to)
+        ]
+        return (
+            sum(_integer(row.get("total_tokens")) for row in filtered),
+            sum(_number(row.get("actual_cost", row.get("cost"))) for row in filtered),
+        )
+    usage = payload.get("usage")
+    total = usage.get("total") if isinstance(usage, dict) else None
+    if isinstance(total, dict):
+        return _integer(total.get("total_tokens")), _number(
+            total.get("actual_cost", total.get("cost"))
+        )
+    daily = payload.get("daily_usage")
+    rows = daily if isinstance(daily, list) else []
+    return (
+        sum(_integer(row.get("total_tokens")) for row in rows if isinstance(row, dict)),
+        sum(
+            _number(row.get("actual_cost", row.get("cost")))
+            for row in rows
+            if isinstance(row, dict)
+        ),
+    )
+
+
+def _number(value: object) -> float:
+    return float(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else 0.0
+
+
+def _integer(value: object) -> int:
+    return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else 0

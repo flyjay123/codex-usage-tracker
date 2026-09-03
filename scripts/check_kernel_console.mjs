@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const source = join(root, "frontend", "kernel-console");
-const assets = ["app.js", "index.html", "model.js", "styles.css"];
+const assets = ["app.js", "comparison.js", "index.html", "model.js", "styles.css"];
 const contents = Object.fromEntries(
   await Promise.all(assets.map(async (name) => [name, await readFile(join(source, name), "utf8")])),
 );

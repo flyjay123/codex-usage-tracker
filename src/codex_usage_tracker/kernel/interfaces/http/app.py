@@ -24,6 +24,7 @@ ROUTES = {
     ("GET", f"{API_PREFIX}/events"): "events",
     ("GET", f"{API_PREFIX}/usage-provider"): "usage_provider",
     ("POST", f"{API_PREFIX}/usage-provider/config"): "usage_provider_config",
+    ("POST", f"{API_PREFIX}/usage-provider/compare"): "usage_provider_compare",
 }
 MAX_BODY_BYTES = 1_048_576
 
@@ -138,6 +139,27 @@ class HttpApp:
             if label is not None and not isinstance(label, str):
                 raise ValueError("label must be a string")
             return _json_response(200, provider.save(api_key, label=label))
+        if method == "POST" and path == f"{API_PREFIX}/usage-provider/compare":
+            provider = self._relay_usage_provider()
+            payload = _json_body(body)
+            key_ids = payload.get("key_ids")
+            if not isinstance(key_ids, list) or any(not isinstance(item, str) for item in key_ids):
+                raise ValueError("key_ids must be a list of strings")
+            date_from = payload.get("date_from")
+            date_to = payload.get("date_to")
+            if date_from is not None and not isinstance(date_from, str):
+                raise ValueError("date_from must be a string")
+            if date_to is not None and not isinstance(date_to, str):
+                raise ValueError("date_to must be a string")
+            return _json_response(
+                200,
+                provider.compare(
+                    key_ids,
+                    date_from=date_from or None,
+                    date_to=date_to or None,
+                    force=payload.get("refresh") is True,
+                ),
+            )
         job_prefix = f"{API_PREFIX}/jobs/"
         if method == "GET" and path.startswith(job_prefix):
             job_id = path.removeprefix(job_prefix)

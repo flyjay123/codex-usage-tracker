@@ -16,7 +16,7 @@ const destination = join(
   "http",
   "console_assets",
 );
-const names = ["app.js", "index.html", "model.js", "styles.css"];
+const names = ["app.js", "comparison.js", "index.html", "model.js", "styles.css"];
 const check = process.argv.includes("--check");
 
 await mkdir(destination, { recursive: true });

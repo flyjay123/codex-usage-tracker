@@ -12,6 +12,7 @@ import {
   routeFromPath,
   sortRows,
 } from "./model.js";
+import { createRelayComparisonPanel } from "./comparison.js";
 
 const API = "/api/kernel/v1";
 const TABLE_PAGE_SIZE = 10;
@@ -502,133 +503,6 @@ function tableFor(rows, includeEvidence = false, options = {}) {
 
 async function renderLive() {
   return renderMonthlyUsage();
-  /* Advanced live-kernel view retained below for rollback/reference. */
-  /*
-  workspace.replaceChildren(heading("live"), loadingMetrics());
-  if (!state.status?.generation) {
-    workspace.append(element("div", { className: "card empty", text: "Build the first local generation with Refresh data. Existing sessions are not read until you ask." }));
-    return;
-  }
-  try {
-    const payload = await request("/query", {
-      method: "POST",
-      body: JSON.stringify({
-        requests: [
-          {
-            dataset: "calls",
-            operation: "aggregate",
-            dimensions: [],
-            measures: [
-              "calls",
-              "uncached_input_tokens",
-              "cached_input_tokens",
-              "reasoning_tokens",
-              "output_tokens",
-              "total_tokens",
-              "configured_cost_usd",
-              "estimated_credits",
-            ],
-            limit: 1,
-          },
-          {
-            dataset: "calls",
-            operation: "share",
-            dimensions: ["thread"],
-            measures: [
-              "calls",
-              "uncached_input_tokens",
-              "cached_input_tokens",
-              "reasoning_tokens",
-              "output_tokens",
-              "total_tokens",
-              "configured_cost_usd",
-              "estimated_credits",
-            ],
-            order_by: "total_tokens",
-            descending: true,
-            limit: 25,
-          },
-          {
-            dataset: "calls",
-            operation: "time_series",
-            dimensions: ["time_day"],
-            measures: [
-              "uncached_input_tokens",
-              "cached_input_tokens",
-              "reasoning_tokens",
-              "output_tokens",
-              "total_tokens",
-              "configured_cost_usd",
-              "estimated_credits",
-            ],
-            order_by: "time_day",
-            descending: true,
-            limit: 14,
-          },
-        ],
-      }),
-    });
-    const summary = payload.results[0];
-    const leaders = payload.results[1];
-    const timeline = payload.results[2];
-    workspace.replaceChildren(
-      heading("live"),
-      metrics(summary.rows[0] || {}, summary),
-    );
-    workspace.append(element("div", { className: "section-grid" }, [
-      element("section", { className: "card", "aria-labelledby": "token-mix-title" }, [
-        element("h2", { id: "token-mix-title", text: "Four-class token mix" }),
-        tokenBars(summary.rows[0] || {}),
-      ]),
-      element("section", { className: "card" }, [
-        element("h2", { text: "Current committed view" }),
-        element("p", {
-          text: "These cards read the existing index. Opening this page never starts or extends a refresh.",
-        }),
-        element("div", {
-          className: "result-meta",
-          text: `Generation ${summary.generation} · ${formatNumber(summary.rows[0]?.calls)} calls · ${formatNumber(summary.elapsed_ms)} ms`,
-        }),
-      ]),
-    ]));
-    workspace.append(element("section", { className: "card", style: "margin-top:1rem" }, [
-      element("h2", { text: "Recent token bands" }),
-      element("p", { className: "result-meta", text: "Daily foundational facts by uncached input, cached input, reasoning, and output." }),
-      tokenTimelineChart(timeline.rows),
-      tableFor(timeline.rows, false, {
-        label: "Recent token bands",
-        compactTokens: true,
-      }),
-      element("p", {
-        className: "result-meta",
-        text: pricingCoverageSummary(timeline),
-      }),
-    ]));
-    workspace.append(element("section", { className: "card", style: "margin-top:1rem" }, [
-      element("h2", { text: "Highest-token threads" }),
-      element("p", {
-        className: "result-meta",
-        text: pricingCoverageSummary(leaders),
-      }),
-      tableFor(leaders.rows, true, {
-        label: "Highest-token threads",
-        compactTokens: true,
-        technicalColumns: ["thread"],
-        hiddenColumns: [
-          "share_calls",
-          "share_uncached_input_tokens",
-          "share_cached_input_tokens",
-          "share_reasoning_tokens",
-          "share_output_tokens",
-          "share_configured_cost_usd",
-          "share_estimated_credits",
-        ],
-      }),
-    ]));
-  } catch (error) {
-    workspace.replaceChildren(heading("live"), errorPanel(error, renderLive));
-  }
-  */
 }
 
 function monthBounds(value) {
@@ -726,6 +600,7 @@ async function renderRelayUsage() {
     result,
   ]);
   workspace.append(panel);
+  let comparisonPanel = null;
 
   const updateKeySelect = (keys, selectedId) => {
     const entries = Array.isArray(keys) ? keys : [];
@@ -739,6 +614,15 @@ async function renderRelayUsage() {
     keySelect.disabled = !entries.length;
     refreshButton.disabled = !entries.length;
     clearButton.disabled = !entries.length;
+    comparisonPanel?.remove();
+    comparisonPanel = createRelayComparisonPanel(entries, {
+      element,
+      errorPanel,
+      formatNumber,
+      request,
+      usageCard,
+    });
+    panel.after(comparisonPanel);
   };
 
   const load = async (force = false) => {
@@ -850,66 +734,6 @@ async function renderMonthlyUsage() {
   await renderRelayUsage();
 }
 
-function loadingMetrics() {
-  const grid = element("div", { className: "metric-grid" });
-  for (let index = 0; index < 4; index += 1) grid.append(element("div", { className: "card metric-card" }, [element("div", { className: "skeleton" })]));
-  return grid;
-}
-
-function metrics(row, result) {
-  const reuse = cacheReuse(row.cached_input_tokens, row.uncached_input_tokens);
-  const cost = row.configured_cost_usd;
-  const credits = row.estimated_credits;
-  const coverage = pricingCoverageSummary(result);
-  return element("div", { className: "metric-grid" }, [
-    metricCard("Calls", formatNumber(row.calls), "Canonical model calls"),
-    metricCard(
-      "Total tokens",
-      formatNumber(row.total_tokens),
-      `${formatNumber(row.uncached_input_tokens)} new · ${formatNumber(row.cached_input_tokens)} cached · ${formatNumber(row.reasoning_tokens)} reasoning · ${formatNumber(row.output_tokens)} output`,
-    ),
-    metricCard(
-      "Cache reuse",
-      formatPercent(reuse),
-      reuse === null ? "No input-token denominator" : "Share of input served from cache",
-    ),
-    metricCard(
-      "Cost and credits",
-      cost === null || cost === undefined ? "Unavailable" : formatCell("configured_cost_usd", cost),
-      credits === null || credits === undefined
-        ? "No configured credit estimate"
-        : `${formatSmallFact(credits)} estimated credits${coverage ? ` · ${coverage}` : ""}`,
-    ),
-  ]);
-}
-
-function metricCard(label, value, detail) {
-  return element("section", { className: "card metric-card" }, [
-    element("span", { text: label }),
-    element("strong", { text: value }),
-    element("small", { text: detail }),
-  ]);
-}
-
-function tokenBars(row) {
-  const values = [
-    ["Uncached input", row.uncached_input_tokens || 0, ""],
-    ["Cached input", row.cached_input_tokens || 0, "cached"],
-    ["Reasoning", row.reasoning_tokens || 0, "reasoning"],
-    ["Output", row.output_tokens || 0, "output"],
-  ];
-  const maximum = Math.max(...values.map((item) => Number(item[1])), 1);
-  return element("div", { className: "token-bars" }, values.map(([label, value, kind]) =>
-    element("div", { className: "token-row" }, [
-      element("span", { text: label }),
-      element("div", { className: "bar-track", role: "img", "aria-label": `${label}: ${formatNumber(value)} tokens` }, [
-        element("div", { className: `bar-fill ${kind}`, style: `width:${boundedPercent(value, maximum)}%` }),
-      ]),
-      element("strong", { text: formatNumber(value) }),
-    ])
-  ));
-}
-
 function timePosition(timestamp, minimum, maximum, start, end) {
   if (maximum <= minimum) return (start + end) / 2;
   return start + ((end - start) * (timestamp - minimum) / (maximum - minimum));
@@ -954,91 +778,6 @@ function appendTimeAxis(
       }),
     );
   }
-}
-
-function tokenTimelineChart(rows) {
-  const observations = rows
-    .map((row) => ({ row, timestamp: timestampMillis(row.time_day) }))
-    .filter((item) => item.timestamp !== null)
-    .sort((left, right) => left.timestamp - right.timestamp);
-  if (!observations.length) {
-    return element("div", {
-      className: "empty",
-      text: "No daily token observations are available for this committed generation.",
-    });
-  }
-  const width = 720;
-  const height = 240;
-  const left = 46;
-  const right = 18;
-  const top = 18;
-  const bottom = 38;
-  const timestamps = observations.map((item) => item.timestamp);
-  const minimum = Math.min(...timestamps);
-  const maximum = Math.max(...timestamps);
-  const series = [
-    ["total_tokens", "Total", "total"],
-    ["uncached_input_tokens", "New input", "new"],
-    ["cached_input_tokens", "Cached input", "cached"],
-    ["reasoning_tokens", "Reasoning", "reasoning"],
-    ["output_tokens", "Output", "output"],
-  ];
-  const maximumTokens = Math.max(
-    1,
-    ...observations.map((item) => Number(item.row.total_tokens || 0)),
-  );
-  const svg = svgElement("svg", {
-    className: "allowance-chart token-timeline-chart",
-    viewBox: `0 0 ${width} ${height}`,
-    role: "img",
-    "aria-label": `Daily token usage over time, ${observations.length} observations`,
-  });
-  for (const percent of [0, 25, 50, 75, 100]) {
-    const y = height - bottom - ((height - top - bottom) * percent / 100);
-    svg.append(svgElement("line", {
-      className: "chart-grid",
-      x1: left,
-      x2: width - right,
-      y1: y,
-      y2: y,
-    }));
-  }
-  svg.append(
-    svgElement("text", {
-      className: "chart-label",
-      x: 2,
-      y: top + 4,
-      text: formatNumber(maximumTokens),
-    }),
-    svgElement("text", {
-      className: "chart-label",
-      x: 2,
-      y: height - bottom + 4,
-      text: "0 tokens",
-    }),
-  );
-  for (const [measure, label, kind] of series) {
-    const points = observations.map((item) => {
-      const x = timePosition(item.timestamp, minimum, maximum, left, width - right);
-      const y = height - bottom - (
-        (height - top - bottom) * Number(item.row[measure] || 0) / maximumTokens
-      );
-      return `${x},${y}`;
-    }).join(" ");
-    svg.append(svgElement("polyline", {
-      className: `chart-line ${kind}`,
-      points,
-      fill: "none",
-      "aria-label": label,
-    }));
-  }
-  appendTimeAxis(svg, timestamps, width, height, left, right);
-  return element("div", { className: "chart-with-legend" }, [
-    svg,
-    element("div", { className: "chart-legend" }, series.map(([, label, kind]) =>
-      element("span", { className: `chart-key ${kind}`, text: label })
-    )),
-  ]);
 }
 
 function allowanceChart(rows) {

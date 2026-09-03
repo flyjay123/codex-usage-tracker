@@ -11,6 +11,7 @@ from .app import HttpResponse
 CONSOLE_AREAS = ("live", "explore", "evidence", "limits", "settings")
 _CONTENT_TYPES = {
     "app.js": "text/javascript; charset=utf-8",
+    "comparison.js": "text/javascript; charset=utf-8",
     "index.html": "text/html; charset=utf-8",
     "model.js": "text/javascript; charset=utf-8",
     "styles.css": "text/css; charset=utf-8",
